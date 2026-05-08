@@ -1,13 +1,93 @@
-body {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+:root {
+  --bg: #070710;
+  --surface: #0f0f1e;
+  --surface-2: #181828;
+  --surface-3: #212138;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --text: #eeeef8;
+  --text-muted: #6868a0;
+  --text-faint: #3a3a60;
+
+  --spd: #e3000f;
+  --spd-dark: #9a000a;
+  --cdu: #484848;
+  --cdu-dark: #282828;
+  --gruene: #3a8a24;
+  --gruene-dark: #245818;
+  --afd: #009ee0;
+  --afd-dark: #0068a0;
+  --linke: #be3075;
+  --linke-dark: #841e52;
+  --fdp: #f5c500;
+  --fdp-dark: #b89000;
+
+  --correct: #22c55e;
+  --wrong: #ef4444;
+
+  --radius: 18px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(100, 60, 200, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(0, 80, 180, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid rgba(150, 120, 255, 0.6);
+  outline-offset: 2px;
+}
+
+img {
+  display: block;
 }
