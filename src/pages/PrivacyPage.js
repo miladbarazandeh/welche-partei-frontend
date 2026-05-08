@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import AdBanner from '../components/AdBanner';
 
 export default function PrivacyPage() {
   return (
@@ -108,6 +109,8 @@ export default function PrivacyPage() {
 
         <p className="privacy-updated">Stand: Mai 2026</p>
       </div>
+
+      <AdBanner />
     </main>
   );
 }

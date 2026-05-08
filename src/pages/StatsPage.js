@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AdBanner from '../components/AdBanner';
 
 const API = process.env.REACT_APP_API_URL || '/api';
 
@@ -168,6 +169,8 @@ export default function StatsPage() {
             }
           </section>
 
+          <AdBanner />
+
           {data.top_correct.length > 0 && (
             <section className="politician-section">
               <p className="stats-section-heading">Oft richtig geraten</p>
@@ -200,6 +203,8 @@ export default function StatsPage() {
           )}
         </>
       )}
+
+      <AdBanner />
 
       <footer className="page-footer">
         <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
