@@ -30,17 +30,48 @@
     <meta name="twitter:title" content="Welche Partei? – Das deutsche Politiker-Quiz" />
     <meta name="twitter:description" content="Kannst du erkennen, welcher Partei ein Politiker angehört? Teste dein Wissen über CDU, SPD, Grüne, FDP, AfD und mehr im schnellen Ratespiel." />
 
-    <!-- Google Analytics: consent defaults to denied until user accepts -->
+    <!-- Consent Mode v2: all signals denied until CMP updates them -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', { analytics_storage: 'denied' });
+      gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
     </script>
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NBTJZLT3KN"></script>
     <script>
       gtag('js', new Date());
       gtag('config', 'G-NBTJZLT3KN');
     </script>
+
+    <!-- Google CMP (Funding Choices) -->
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-1616735179810869?ers=1"></script>
+    <script>
+      (function() {
+        function signalGooglefcPresent() {
+          if (!window.frames['googlefcPresent']) {
+            if (document.body) {
+              const iframe = document.createElement('iframe');
+              iframe.style = 'width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;';
+              iframe.style.display = 'none';
+              iframe.name = 'googlefcPresent';
+              document.body.appendChild(iframe);
+            } else {
+              setTimeout(signalGooglefcPresent, 0);
+            }
+          }
+        }
+        signalGooglefcPresent();
+      })();
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1616735179810869" crossorigin="anonymous"></script>
   </head>
   <body>
     <noscript>Du musst JavaScript aktivieren, um diese App zu nutzen.</noscript>

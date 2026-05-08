@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
-import ConsentBanner from './components/ConsentBanner';
 import GameHeader from './components/GameHeader';
 import GuessHistory from './components/GuessHistory';
 import PartyGrid from './components/PartyGrid';
@@ -120,8 +119,6 @@ export default function App() {
   }, [gameState, politician, fetchPolitician]);
 
   return (
-    <>
-    <ConsentBanner />
     <main className="app">
       <GameHeader
         score={stats.score}
@@ -157,6 +154,5 @@ export default function App() {
         </>
       )}
     </main>
-    </>
   );
 }
