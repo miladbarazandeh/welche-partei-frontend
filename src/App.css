@@ -1060,3 +1060,119 @@
   background: #7d6ef0;
 }
 .btn-retry:active { transform: scale(0.96); }
+
+/* ── Page Footer ─────────────────────────────────────── */
+.page-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+  margin-top: auto;
+}
+
+.page-footer__link {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.15s;
+}
+
+.page-footer__link:hover {
+  color: var(--text-muted);
+}
+
+/* ── Privacy Page ────────────────────────────────────── */
+.privacy-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  padding: 14px 14px 40px;
+  gap: 18px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.privacy-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.privacy-section {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.privacy-section:last-of-type {
+  border-bottom: none;
+}
+
+.privacy-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+.privacy-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.privacy-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.privacy-link {
+  color: #9a7cf0;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.privacy-link:hover {
+  color: #b89ef8;
+  text-decoration: underline;
+}
+
+.privacy-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 0;
+}
+
+.privacy-list li {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  padding-left: 14px;
+  position: relative;
+}
+
+.privacy-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--text-faint);
+}
+
+.privacy-list strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.privacy-updated {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-align: right;
+  padding-top: 20px;
+}

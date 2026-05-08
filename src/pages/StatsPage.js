@@ -200,6 +200,10 @@ export default function StatsPage() {
           )}
         </>
       )}
+
+      <footer className="page-footer">
+        <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
+      </footer>
     </main>
   );
 }

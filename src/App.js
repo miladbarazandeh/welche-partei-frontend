@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 import GameHeader from './components/GameHeader';
 import GuessHistory from './components/GuessHistory';
@@ -153,6 +154,10 @@ export default function App() {
           <GuessHistory history={history} />
         </>
       )}
+
+      <footer className="page-footer">
+        <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
+      </footer>
     </main>
   );
 }

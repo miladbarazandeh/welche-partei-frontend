@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import StatsPage from './pages/StatsPage';
+import PrivacyPage from './pages/PrivacyPage';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,6 +14,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/stats" element={<StatsPage />} />
+        <Route path="/datenschutz" element={<PrivacyPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
