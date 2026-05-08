@@ -7,11 +7,14 @@ const PARTY_SLUG = {
   'FDP': 'fdp',
 };
 
-const PARTIES = ['SPD', 'CDU/CSU', 'Grüne', 'AfD', 'Die Linke', 'FDP'];
+// Left parties in left column, right parties in right column (paired by row)
+const PARTIES = ['SPD', 'CDU/CSU', 'Grüne', 'FDP', 'Die Linke', 'AfD'];
 
 export default function PartyGrid({ onGuess, result, disabled }) {
   return (
     <div className="party-grid">
+      <span className="party-grid__label">← Links</span>
+      <span className="party-grid__label party-grid__label--right">Rechts →</span>
       {PARTIES.map((party) => {
         const slug = PARTY_SLUG[party];
         let stateClass = '';

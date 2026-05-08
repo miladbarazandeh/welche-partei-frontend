@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 
-export default function GameHeader({ score, streak, best, scorePop }) {
+export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop }) {
+  const spectrumDisplay = totalAnswers > 0 && spectrumAccuracy != null
+    ? `${Math.round(spectrumAccuracy)}%`
+    : '—';
+
   return (
     <header className="header">
       <div className="header__brand">
@@ -27,6 +31,10 @@ export default function GameHeader({ score, streak, best, scorePop }) {
           <div className="stat">
             <span className="stat__value">{best}</span>
             <span className="stat__label">Rekord</span>
+          </div>
+          <div className="stat stat--spectrum">
+            <span className="stat__value">{spectrumDisplay}</span>
+            <span className="stat__label">Spektrum</span>
           </div>
         </div>
         <Link to="/stats" className="stats-nav-btn">Statistiken</Link>

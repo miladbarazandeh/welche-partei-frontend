@@ -8,7 +8,7 @@ import PoliticianCard from './components/PoliticianCard';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 const REVEAL_MS = 1800;
 
-const DEFAULT_STATS = { score: 0, streak: 0, best: 0 };
+const DEFAULT_STATS = { score: 0, streak: 0, best: 0, spectrumAccuracy: null, totalAnswers: 0 };
 
 export default function App() {
   const [politician, setPolitician] = useState(null);
@@ -44,7 +44,13 @@ export default function App() {
         const res = await fetch(`${API}/stats/`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
-          setStats({ score: data.score, streak: data.streak, best: data.best });
+          setStats({
+            score: data.score,
+            streak: data.streak,
+            best: data.best,
+            spectrumAccuracy: data.spectrum_accuracy ?? null,
+            totalAnswers: data.total_answers ?? 0,
+          });
           setHistory(
             data.recent.map((a) => ({
               politician_name: a.politician_name,
@@ -83,7 +89,13 @@ export default function App() {
       setFlashClass(data.correct ? 'politician-card--flash-correct' : 'politician-card--flash-wrong');
 
       // Stats come from server
-      setStats({ score: data.score, streak: data.streak, best: data.best });
+      setStats({
+        score: data.score,
+        streak: data.streak,
+        best: data.best,
+        spectrumAccuracy: data.spectrum_accuracy ?? null,
+        totalAnswers: data.total_answers ?? 0,
+      });
 
       if (data.correct) {
         setScorePop(Date.now());
@@ -112,6 +124,8 @@ export default function App() {
         score={stats.score}
         streak={stats.streak}
         best={stats.best}
+        spectrumAccuracy={stats.spectrumAccuracy}
+        totalAnswers={stats.totalAnswers}
         scorePop={scorePop}
       />
 

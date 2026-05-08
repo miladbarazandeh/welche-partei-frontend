@@ -125,6 +125,41 @@ export default function StatsPage() {
             <InsightCard value={data.global_best_streak} label="Rekord-Serie" />
           </div>
 
+          {data.spectrum_accuracy != null && (
+            <section className="leaning-section">
+              <p className="stats-section-heading">Links / Rechts Genauigkeit</p>
+              <div className="leaning-summary">
+                <div className="leaning-summary__global">
+                  <span className="leaning-summary__value">{data.spectrum_accuracy}%</span>
+                  <span className="leaning-summary__label">Global Spektrum</span>
+                </div>
+              </div>
+              {data.leaning_stats && data.leaning_stats.length > 0 && (
+                <div className="leaning-bars">
+                  {data.leaning_stats.map(ls => (
+                    <div key={ls.leaning} className={`leaning-bar leaning-bar--${ls.leaning}`}>
+                      <div className="leaning-bar__header">
+                        <span className="leaning-bar__name">
+                          {ls.leaning === 'left' ? '← Links' : 'Rechts →'}
+                        </span>
+                        <div className="leaning-bar__stats">
+                          <span className="leaning-bar__exact">{ls.accuracy}% exakt</span>
+                          <span className="leaning-bar__spectrum">{ls.spectrum_accuracy}% Seite</span>
+                        </div>
+                      </div>
+                      <div className="party-bar__track">
+                        <div
+                          className={`party-bar__fill leaning-bar__fill--${ls.leaning}`}
+                          style={{ width: `${ls.spectrum_accuracy}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
           <section className="party-accuracy">
             <p className="stats-section-heading">Genauigkeit pro Partei</p>
             {[...data.party_stats]
