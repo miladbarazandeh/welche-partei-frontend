@@ -847,6 +847,108 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Confusion matrix table */
+.cm-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.cm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cm-table th,
+.cm-table td {
+  padding: 0;
+}
+
+.cm-th-corner {
+  background: var(--surface);
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  min-width: 56px;
+  padding: 6px 8px;
+}
+
+.cm-th-corner-inner {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.55rem;
+  color: var(--text-faint);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 2px;
+}
+
+.cm-th-col {
+  padding: 7px 4px 6px;
+  text-align: center;
+  font-weight: 700;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  min-width: 44px;
+}
+
+.cm-th-col--spd    { color: #ff5560; }
+.cm-th-col--cducsu { color: #aaaaaa; }
+.cm-th-col--gruene { color: #6fd450; }
+.cm-th-col--afd    { color: #5ec8f0; }
+.cm-th-col--linke  { color: #e86aaa; }
+.cm-th-col--fdp    { color: #f5c500; }
+
+.cm-td-label {
+  padding: 0 8px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--surface);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  border-right: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  height: 36px;
+  vertical-align: middle;
+}
+
+.cm-td-label--spd    { color: #ff5560; }
+.cm-td-label--cducsu { color: #aaaaaa; }
+.cm-td-label--gruene { color: #6fd450; }
+.cm-td-label--afd    { color: #5ec8f0; }
+.cm-td-label--linke  { color: #e86aaa; }
+.cm-td-label--fdp    { color: #f5c500; }
+
+.cm-td-cell {
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  height: 36px;
+  vertical-align: middle;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.63rem;
+}
+
+.cm-td-cell--correct {
+  background: rgba(34, 197, 94, calc(var(--i) * 0.8));
+}
+
+.cm-td-cell--wrong {
+  background: rgba(239, 68, 68, calc(var(--i) * 0.7));
+}
+
+.cm-td-cell--zero {
+  color: var(--text-faint);
+}
+
 
 .stats-nav-btn {
   font-size: 0.68rem;
@@ -1275,6 +1377,439 @@
 
 .page-footer__link:hover {
   color: var(--text-muted);
+}
+
+.page-footer__separator {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+/* ── Politician Search ───────────────────────────────── */
+.pol-search {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pol-search__input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.pol-search__icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  display: flex;
+  pointer-events: none;
+}
+
+.pol-search__input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 11px 36px 11px 36px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.pol-search__input::-webkit-search-cancel-button { display: none; }
+
+.pol-search__input::placeholder { color: var(--text-faint); }
+
+.pol-search__input:focus {
+  border-color: rgba(150, 120, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(150, 120, 255, 0.1);
+}
+
+.pol-search__spinner {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-strong);
+  border-top-color: rgba(150, 120, 255, 0.7);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.pol-search__results {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pol-search__result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px 8px 10px;
+  text-decoration: none;
+  transition: background 0.12s, border-color 0.12s, transform 0.1s;
+  animation: historyIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pol-search__result:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  transform: translateX(2px);
+}
+
+.pol-search__avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.pol-search__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.pol-search__avatar-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-3);
+}
+
+.pol-search__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pol-search__name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+}
+
+.pol-search__parliament {
+  font-size: 0.59rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pol-search__arrow {
+  font-size: 1rem;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.pol-search__empty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 14px 0;
+}
+
+/* ── Politician Row Link variant ─────────────────────── */
+.politician-row--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.1s;
+}
+
+.politician-row--link:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  transform: translateX(2px);
+}
+
+.politician-row__chevron {
+  font-size: 1rem;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* ── Politician Detail Page ──────────────────────────── */
+.politician-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  padding: 14px 14px 150px;
+  gap: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Hero card */
+.pol-hero {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.pol-hero--spd    { border-left-color: var(--spd); }
+.pol-hero--cducsu { border-left-color: #666; }
+.pol-hero--gruene { border-left-color: var(--gruene); }
+.pol-hero--afd    { border-left-color: var(--afd); }
+.pol-hero--linke  { border-left-color: var(--linke); }
+.pol-hero--fdp    { border-left-color: var(--fdp); }
+
+.pol-hero__photo-wrap {
+  position: relative;
+  width: 100%;
+  height: clamp(220px, 62vw, 300px);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.pol-hero__party-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.pol-hero__info {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pol-hero__name {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.pol-hero__parliament {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-weight: 600;
+}
+
+/* Stats row */
+.pol-stats-row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* Accuracy ring */
+.accuracy-ring {
+  position: relative;
+  width: 115px;
+  height: 115px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.accuracy-ring__svg {
+  width: 88px;
+  height: 88px;
+}
+
+.accuracy-ring__track {
+  fill: none;
+  stroke: var(--surface-3);
+  stroke-width: 8;
+}
+
+.accuracy-ring__fill {
+  fill: none;
+  stroke: var(--correct);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.5));
+}
+
+.accuracy-ring__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.accuracy-ring__value {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--correct);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+}
+
+.accuracy-ring__sub {
+  font-size: 0.47rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.pol-stat-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  gap: 6px;
+  padding: 16px 12px;
+}
+
+.pol-stat-card__value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.pol-stat-card__label {
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Confusion on politician page */
+.pol-confusion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pol-confusion__list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.confusion-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  transition: border-color 0.15s;
+}
+
+.confusion-bar--correct {
+  border-color: rgba(34, 197, 94, 0.28);
+  background: rgba(34, 197, 94, 0.04);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
+}
+
+.confusion-bar__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.confusion-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.confusion-bar__correct-badge {
+  font-size: 0.56rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--correct);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 20px;
+  padding: 2px 7px;
+}
+
+.confusion-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.confusion-bar__count {
+  font-size: 0.62rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.confusion-bar__pct {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  min-width: 38px;
+  text-align: right;
+}
+
+.confusion-bar__fill--correct {
+  background: var(--correct);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
 }
 
 .page-footer__separator {

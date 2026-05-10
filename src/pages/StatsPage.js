@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdBanner from '../components/AdBanner';
 import AppPromoCards from '../components/AppPromoCards';
@@ -44,6 +44,72 @@ function PartyBar({ party, total, correct, accuracy }) {
   );
 }
 
+const SHORT_PARTY = {
+  'SPD': 'SPD',
+  'CDU/CSU': 'CDU',
+  'Grüne': 'Grüne',
+  'AfD': 'AfD',
+  'Die Linke': 'Linke',
+  'FDP': 'FDP',
+};
+
+function ConfusionMatrix({ matrix }) {
+  const parties = matrix.map(r => r.actual);
+  return (
+    <section className="confusion-section">
+      <p className="stats-section-heading">Verwechslungsmatrix</p>
+      <div className="cm-wrap">
+        <table className="cm-table">
+          <thead>
+            <tr>
+              <th className="cm-th-corner">
+                <div className="cm-th-corner-inner">
+                  <span>Ist ↓</span>
+                  <span>Geraten →</span>
+                </div>
+              </th>
+              {parties.map(p => (
+                <th key={p} className={`cm-th-col cm-th-col--${PARTY_CLASS[p] || ''}`}>
+                  {SHORT_PARTY[p] ?? p}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {matrix.map(row => (
+              <tr key={row.actual}>
+                <td className={`cm-td-label cm-td-label--${PARTY_CLASS[row.actual] || ''}`}>
+                  {row.actual}
+                </td>
+                {parties.map(guessed => {
+                  const cell = row.guesses?.[guessed];
+                  const pct = cell?.pct ?? 0;
+                  const isCorrect = guessed === row.actual;
+                  const cls = pct === 0
+                    ? 'cm-td-cell cm-td-cell--zero'
+                    : isCorrect
+                      ? 'cm-td-cell cm-td-cell--correct'
+                      : 'cm-td-cell cm-td-cell--wrong';
+                  return (
+                    <td
+                      key={guessed}
+                      className={cls}
+                      style={{ '--i': pct / 100 }}
+                      title={`${row.actual} → ${guessed}: ${pct}%`}
+                    >
+                      {pct > 0 ? `${pct}%` : '–'}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function ConfusionRow({ actual, guessed, count }) {
   return (
     <div className="confusion-row">
@@ -55,10 +121,11 @@ function ConfusionRow({ actual, guessed, count }) {
   );
 }
 
-function PoliticianRow({ rank, name, party, image, accuracy, variant }) {
+function PoliticianRow({ id, reference, rank, name, party, image, accuracy, variant }) {
   const cls = PARTY_CLASS[party] || '';
-  return (
-    <div className={`politician-row politician-row--${cls}`}>
+  const linkTarget = reference || id;
+  const inner = (
+    <>
       <span className="politician-row__rank">{rank}</span>
       <div className="politician-row__avatar">
         {image
@@ -73,6 +140,104 @@ function PoliticianRow({ rank, name, party, image, accuracy, variant }) {
       <span className={`politician-row__count politician-row__count--${variant}`}>
         {accuracy}%
       </span>
+      {linkTarget && <span className="politician-row__chevron">›</span>}
+    </>
+  );
+
+  if (linkTarget) {
+    return (
+      <Link to={`/politicians/${linkTarget}`} className={`politician-row politician-row--${cls} politician-row--link`}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <div className={`politician-row politician-row--${cls}`}>
+      {inner}
+    </div>
+  );
+}
+
+function PoliticianSearch() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (query.trim().length < 2) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    debounceRef.current = setTimeout(() => {
+      fetch(`${API}/politicians/search/?q=${encodeURIComponent(query.trim())}`)
+        .then(r => r.json())
+        .then(d => { setResults(d); setLoading(false); })
+        .catch(() => { setResults([]); setLoading(false); });
+    }, 300);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [query]);
+
+  const showResults = query.trim().length >= 2;
+
+  return (
+    <div className="pol-search">
+      <div className="pol-search__input-wrap">
+        <span className="pol-search__icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M9 9L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </span>
+        <input
+          className="pol-search__input"
+          type="search"
+          placeholder="Politiker suchen…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+        />
+        {loading && <span className="pol-search__spinner" aria-hidden="true" />}
+      </div>
+
+      {showResults && (
+        <div className="pol-search__results" role="list">
+          {results.length === 0 && !loading && (
+            <p className="pol-search__empty">Keine Ergebnisse für „{query.trim()}"</p>
+          )}
+          {results.map(p => {
+            const cls = PARTY_CLASS[p.party] || '';
+            return (
+              <Link
+                key={p.reference}
+                to={`/politicians/${p.reference}`}
+                className="pol-search__result"
+                role="listitem"
+              >
+                <div className="pol-search__avatar">
+                  {p.image
+                    ? <img src={p.image} alt={p.name} />
+                    : <span className="pol-search__avatar-placeholder" />
+                  }
+                </div>
+                <div className="pol-search__meta">
+                  <span className="pol-search__name">{p.name}</span>
+                  <span className="pol-search__parliament">{p.parliament}</span>
+                </div>
+                <span className={`party-tag party-tag--${cls}`}>{p.party}</span>
+                <span className="pol-search__arrow" aria-hidden="true">›</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -103,6 +268,8 @@ export default function StatsPage() {
         </div>
         <Link to="/" className="stats-back-btn">← Spielen</Link>
       </header>
+
+      <PoliticianSearch />
 
       {loading && (
         <div className="stats-loading">
@@ -170,14 +337,16 @@ export default function StatsPage() {
             }
           </section>
 
-          <AdBanner />
+          {data.confusion_matrix?.length > 0 && (
+            <ConfusionMatrix matrix={data.confusion_matrix} />
+          )}
 
           {data.top_correct.length > 0 && (
             <section className="politician-section">
               <p className="stats-section-heading">Oft richtig geraten</p>
               <div className="politician-list">
                 {data.top_correct.map((p, i) => (
-                  <PoliticianRow key={i} rank={i + 1} {...p} variant="correct" />
+                  <PoliticianRow key={p.id ?? i} rank={i + 1} {...p} variant="correct" />
                 ))}
               </div>
             </section>
@@ -188,7 +357,7 @@ export default function StatsPage() {
               <p className="stats-section-heading">Oft falsch geraten</p>
               <div className="politician-list">
                 {data.top_wrong.map((p, i) => (
-                  <PoliticianRow key={i} rank={i + 1} {...p} variant="wrong" />
+                  <PoliticianRow key={p.id ?? i} rank={i + 1} {...p} variant="wrong" />
                 ))}
               </div>
             </section>

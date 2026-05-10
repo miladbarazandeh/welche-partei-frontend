@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import StatsPage from './pages/StatsPage';
+import PoliticianPage from './pages/PoliticianPage';
 import PrivacyPage from './pages/PrivacyPage';
 import ImprintPage from './pages/ImprintPage';
 import StickyPromoBar from './components/StickyPromoBar';
@@ -17,6 +18,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/stats" element={<StatsPage />} />
+        <Route path="/politicians/:id" element={<PoliticianPage />} />
         <Route path="/datenschutz" element={<PrivacyPage />} />
         <Route path="/impressum" element={<ImprintPage />} />
       </Routes>
