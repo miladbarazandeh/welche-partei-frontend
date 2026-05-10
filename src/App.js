@@ -56,15 +56,13 @@ export default function App() {
         const res = await fetch(`${API}/stats/`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
-          const total = data.total_answers ?? 0;
           setStats({
             score: data.score,
             streak: data.streak,
             best: data.best,
             spectrumAccuracy: data.spectrum_accuracy ?? null,
-            totalAnswers: total,
+            totalAnswers: data.total_answers ?? 0,
           });
-          window.dispatchEvent(new CustomEvent('answers-updated', { detail: { totalAnswers: total } }));
           setHistory(
             data.recent.map((a) => ({
               politician_name: a.politician_name,
@@ -115,15 +113,13 @@ export default function App() {
       if (data.correct) playCorrect(); else playWrong();
 
       // Stats come from server
-      const total = data.total_answers ?? 0;
       setStats({
         score: data.score,
         streak: data.streak,
         best: data.best,
         spectrumAccuracy: data.spectrum_accuracy ?? null,
-        totalAnswers: total,
+        totalAnswers: data.total_answers ?? 0,
       });
-      window.dispatchEvent(new CustomEvent('answers-updated', { detail: { totalAnswers: total } }));
 
       if (data.correct) {
         setScorePop(Date.now());

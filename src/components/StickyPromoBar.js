@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const APPS = [
   {
@@ -34,23 +34,9 @@ const APPS = [
 ];
 
 const STORAGE_KEY = 'sticky_promo_collapsed';
-const UNLOCK_THRESHOLD = 20;
 
 export default function StickyPromoBar() {
-  const [visible, setVisible] = useState(false);
-  const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem(STORAGE_KEY) === '1'
-  );
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.detail.totalAnswers >= UNLOCK_THRESHOLD) setVisible(true);
-    };
-    window.addEventListener('answers-updated', handler);
-    return () => window.removeEventListener('answers-updated', handler);
-  }, []);
-
-  if (!visible) return null;
+  const [collapsed, setCollapsed] = useState(true);
 
   const toggle = () => {
     const next = !collapsed;
