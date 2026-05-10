@@ -27,7 +27,7 @@ const APPS = [
   },
   {
     icon: '📓',
-    name: 'Daily Journal',
+    name: 'Plus Minus Next',
     desc: 'Dein tägliches Tagebuch',
     href: 'https://apps.apple.com/de/app/daily-journal-plus-minus-next/id6759860431',
   },

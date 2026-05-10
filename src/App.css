@@ -602,7 +602,7 @@
   width: 100%;
 }
 
-@media (max-width: 340px) {
+@media (max-width: 480px) {
   .insights-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -615,14 +615,20 @@
   border-radius: var(--radius-sm);
   padding: 13px 8px;
   gap: 4px;
+  min-width: 0;
 }
 
 .insight-card__value {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 4vw, 1.25rem);
   font-weight: 800;
   color: #fff;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
 }
 
 .insight-card__label {
