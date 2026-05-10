@@ -31,17 +31,16 @@ export default function ConsentModal() {
     <div className="consent-overlay">
       <div className="consent-modal">
         <div className="consent-modal__icon">🍪</div>
-        <h2 className="consent-modal__title">Datenschutz & Cookies</h2>
+        <h2 className="consent-modal__title">Cookie-Einstellungen</h2>
         <p className="consent-modal__text">
-          Wir nutzen <strong>Google Analytics</strong>, um zu verstehen, wie die App genutzt wird – anonym und ohne persönliche Daten.
-          Deine Einwilligung ist freiwillig und kann jederzeit widerrufen werden.
+          Wir verwenden notwendige Cookies, damit die App funktioniert. Mit deiner Zustimmung setzen wir zusätzlich Marketing- und Analyse-Cookies ein, um das Erlebnis zu verbessern.
         </p>
         <div className="consent-modal__actions">
           <button className="consent-modal__btn consent-modal__btn--accept" onClick={accept}>
-            Akzeptieren
+            Alle akzeptieren
           </button>
           <button className="consent-modal__btn consent-modal__btn--decline" onClick={decline}>
-            Ablehnen
+            Nur notwendige
           </button>
         </div>
       </div>
