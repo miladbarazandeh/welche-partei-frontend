@@ -206,7 +206,7 @@
 .politician-card__photo-wrap {
   position: relative;
   width: 100%;
-  height: clamp(170px, 46vw, 250px);
+  height: clamp(220px, 62vw, 300px);
   background: var(--surface-2);
   overflow: hidden;
 }
