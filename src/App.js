@@ -145,6 +145,14 @@ export default function App() {
   return (
     <>
     {showSupportModal && <SupportModal onClose={handleCloseSupport} />}
+    <button
+      className="sound-fab"
+      onClick={toggleMute}
+      aria-label={muted ? 'Ton einschalten' : 'Ton ausschalten'}
+      title={muted ? 'Ton einschalten' : 'Ton ausschalten'}
+    >
+      {muted ? '🔇' : '🔊'}
+    </button>
     <main className="app">
       <GameHeader
         score={stats.score}
@@ -153,8 +161,6 @@ export default function App() {
         spectrumAccuracy={stats.spectrumAccuracy}
         totalAnswers={stats.totalAnswers}
         scorePop={scorePop}
-        muted={muted}
-        onToggleMute={toggleMute}
       />
 
       {gameState === 'error' ? (

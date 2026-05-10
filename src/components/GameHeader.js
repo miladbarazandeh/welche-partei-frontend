@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop, muted, onToggleMute }) {
+export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop }) {
   const spectrumDisplay = totalAnswers > 0 && spectrumAccuracy != null
     ? `${Math.round(spectrumAccuracy)}%`
     : '—';
@@ -16,14 +16,6 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
             <h1 className="header__title">Welche Partei?</h1>
             <p className="header__subtitle">Politiker-Partei erraten</p>
           </div>
-          <button
-            className="sound-btn"
-            onClick={onToggleMute}
-            aria-label={muted ? 'Ton einschalten' : 'Ton ausschalten'}
-            title={muted ? 'Ton einschalten' : 'Ton ausschalten'}
-          >
-            {muted ? '🔇' : '🔊'}
-          </button>
         </div>
         <div className="header__nav">
           <Link to="/stats" className="stats-nav-btn">Statistiken</Link>
@@ -33,7 +25,7 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
             rel="noopener noreferrer"
             className="bmc-btn"
           >
-            Unterstützen ☕
+            Support ☕
           </a>
         </div>
       </div>
