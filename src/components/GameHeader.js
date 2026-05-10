@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop }) {
+export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop, muted, onToggleMute }) {
   const spectrumDisplay = totalAnswers > 0 && spectrumAccuracy != null
     ? `${Math.round(spectrumAccuracy)}%`
     : '—';
@@ -38,6 +38,14 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
           </div>
         </div>
         <div className="header__nav">
+          <button
+            className="sound-btn"
+            onClick={onToggleMute}
+            aria-label={muted ? 'Ton einschalten' : 'Ton ausschalten'}
+            title={muted ? 'Ton einschalten' : 'Ton ausschalten'}
+          >
+            {muted ? '🔇' : '🔊'}
+          </button>
           <Link to="/stats" className="stats-nav-btn">Statistiken</Link>
           <a
             href="https://buymeacoffee.com/welche.partei"

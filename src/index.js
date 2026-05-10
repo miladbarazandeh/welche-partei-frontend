@@ -6,6 +6,8 @@ import App from './App';
 import StatsPage from './pages/StatsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import ImprintPage from './pages/ImprintPage';
+import StickyPromoBar from './components/StickyPromoBar';
+import ConsentModal from './components/ConsentBanner';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,6 +20,8 @@ root.render(
         <Route path="/datenschutz" element={<PrivacyPage />} />
         <Route path="/impressum" element={<ImprintPage />} />
       </Routes>
+      <StickyPromoBar />
+      <ConsentModal />
     </BrowserRouter>
   </React.StrictMode>
 );

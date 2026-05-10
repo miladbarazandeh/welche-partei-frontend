@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import AdBanner from './components/AdBanner';
+import AppPromoCards from './components/AppPromoCards';
 import GameHeader from './components/GameHeader';
 import GameOverScreen from './components/GameOverScreen';
 import GuessHistory from './components/GuessHistory';
 import PartyGrid from './components/PartyGrid';
 import PoliticianCard from './components/PoliticianCard';
 import SupportModal from './components/SupportModal';
+import { useSoundEffects } from './hooks/useSoundEffects';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 const REVEAL_MS = 1800;
@@ -24,6 +26,7 @@ export default function App() {
   const [scorePop, setScorePop] = useState(null);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const nextTimer = useRef(null);
+  const { playCorrect, playWrong, muted, toggleMute } = useSoundEffects();
 
   const fetchPolitician = useCallback(async () => {
     setGameState('loading');
@@ -107,6 +110,7 @@ export default function App() {
       const roundResult = { ...data, guessed_party: guessedParty };
       setResult(roundResult);
       setFlashClass(data.correct ? 'politician-card--flash-correct' : 'politician-card--flash-wrong');
+      if (data.correct) playCorrect(); else playWrong();
 
       // Stats come from server
       setStats({
@@ -149,6 +153,8 @@ export default function App() {
         spectrumAccuracy={stats.spectrumAccuracy}
         totalAnswers={stats.totalAnswers}
         scorePop={scorePop}
+        muted={muted}
+        onToggleMute={toggleMute}
       />
 
       {gameState === 'error' ? (
@@ -176,6 +182,7 @@ export default function App() {
           <AdBanner />
 
           <GuessHistory history={history} />
+          <AppPromoCards />
         </>
       )}
 

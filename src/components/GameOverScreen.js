@@ -1,3 +1,5 @@
+import AppPromoCards from './AppPromoCards';
+
 const BMC_URL = 'https://buymeacoffee.com/welche.partei';
 
 function resetSession() {
@@ -50,6 +52,8 @@ export default function GameOverScreen({ stats }) {
           Neu starten
         </button>
       </div>
+
+      <AppPromoCards />
     </div>
   );
 }

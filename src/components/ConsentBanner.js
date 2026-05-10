@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 const CONSENT_KEY = 'ga_consent';
 
-export default function ConsentBanner() {
+export default function ConsentModal() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -28,13 +28,22 @@ export default function ConsentBanner() {
   if (!visible) return null;
 
   return (
-    <div className="consent-bar">
-      <p className="consent-bar__text">
-        Wir nutzen Google Analytics, um die Nutzung besser zu verstehen.
-      </p>
-      <div className="consent-bar__actions">
-        <button className="consent-bar__btn consent-bar__btn--decline" onClick={decline}>Ablehnen</button>
-        <button className="consent-bar__btn consent-bar__btn--accept" onClick={accept}>Akzeptieren</button>
+    <div className="consent-overlay">
+      <div className="consent-modal">
+        <div className="consent-modal__icon">🍪</div>
+        <h2 className="consent-modal__title">Datenschutz & Cookies</h2>
+        <p className="consent-modal__text">
+          Wir nutzen <strong>Google Analytics</strong>, um zu verstehen, wie die App genutzt wird – anonym und ohne persönliche Daten.
+          Deine Einwilligung ist freiwillig und kann jederzeit widerrufen werden.
+        </p>
+        <div className="consent-modal__actions">
+          <button className="consent-modal__btn consent-modal__btn--accept" onClick={accept}>
+            Akzeptieren
+          </button>
+          <button className="consent-modal__btn consent-modal__btn--decline" onClick={decline}>
+            Ablehnen
+          </button>
+        </div>
       </div>
     </div>
   );

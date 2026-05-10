@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdBanner from '../components/AdBanner';
+import AppPromoCards from '../components/AppPromoCards';
 
 const API = process.env.REACT_APP_API_URL || '/api';
 
@@ -205,6 +206,7 @@ export default function StatsPage() {
       )}
 
       <AdBanner />
+      <AppPromoCards />
 
       <footer className="page-footer">
         <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
