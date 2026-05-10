@@ -37,7 +37,17 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
             <span className="stat__label">Spektrum</span>
           </div>
         </div>
-        <Link to="/stats" className="stats-nav-btn">Statistiken</Link>
+        <div className="header__nav">
+          <Link to="/stats" className="stats-nav-btn">Statistiken</Link>
+          <a
+            href="https://buymeacoffee.com/welche.partei"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bmc-btn"
+          >
+            Unterstützen ☕
+          </a>
+        </div>
       </div>
     </header>
   );

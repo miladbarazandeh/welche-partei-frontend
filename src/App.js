@@ -6,6 +6,7 @@ import GameHeader from './components/GameHeader';
 import GuessHistory from './components/GuessHistory';
 import PartyGrid from './components/PartyGrid';
 import PoliticianCard from './components/PoliticianCard';
+import SupportModal from './components/SupportModal';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 const REVEAL_MS = 1800;
@@ -20,7 +21,9 @@ export default function App() {
   const [stats, setStats] = useState(DEFAULT_STATS);
   const [history, setHistory] = useState([]);
   const [scorePop, setScorePop] = useState(null);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   const nextTimer = useRef(null);
+  const initialTotalAnswers = useRef(null);
 
   const fetchPolitician = useCallback(async () => {
     setGameState('loading');
@@ -53,6 +56,7 @@ export default function App() {
             spectrumAccuracy: data.spectrum_accuracy ?? null,
             totalAnswers: data.total_answers ?? 0,
           });
+          initialTotalAnswers.current = data.total_answers ?? 0;
           setHistory(
             data.recent.map((a) => ({
               politician_name: a.politician_name,
@@ -71,6 +75,22 @@ export default function App() {
     init();
     return () => clearTimeout(nextTimer.current);
   }, [fetchPolitician]);
+
+  useEffect(() => {
+    if (
+      initialTotalAnswers.current !== null &&
+      initialTotalAnswers.current < 10 &&
+      stats.totalAnswers >= 10 &&
+      !localStorage.getItem('support_modal_seen')
+    ) {
+      setShowSupportModal(true);
+    }
+  }, [stats.totalAnswers]);
+
+  const handleCloseSupport = () => {
+    localStorage.setItem('support_modal_seen', '1');
+    setShowSupportModal(false);
+  };
 
   const handleGuess = useCallback(async (guessedParty) => {
     if (gameState !== 'playing' || !politician) return;
@@ -121,6 +141,8 @@ export default function App() {
   }, [gameState, politician, fetchPolitician]);
 
   return (
+    <>
+    {showSupportModal && <SupportModal onClose={handleCloseSupport} />}
     <main className="app">
       <GameHeader
         score={stats.score}
@@ -163,5 +185,6 @@ export default function App() {
         <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
       </footer>
     </main>
+    </>
   );
 }
