@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './App.css';
 import AdBanner from './components/AdBanner';
 import GameHeader from './components/GameHeader';
+import GameOverScreen from './components/GameOverScreen';
 import GuessHistory from './components/GuessHistory';
 import PartyGrid from './components/PartyGrid';
 import PoliticianCard from './components/PoliticianCard';
@@ -23,7 +24,6 @@ export default function App() {
   const [scorePop, setScorePop] = useState(null);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const nextTimer = useRef(null);
-  const initialTotalAnswers = useRef(null);
 
   const fetchPolitician = useCallback(async () => {
     setGameState('loading');
@@ -35,8 +35,12 @@ export default function App() {
       const res = await fetch(`${API}/politicians/random/`, { credentials: 'include' });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setPolitician(data);
-      setGameState('playing');
+      if (data.game_over) {
+        setGameState('game_over');
+      } else {
+        setPolitician(data);
+        setGameState('playing');
+      }
     } catch {
       setGameState('error');
     }
@@ -56,7 +60,6 @@ export default function App() {
             spectrumAccuracy: data.spectrum_accuracy ?? null,
             totalAnswers: data.total_answers ?? 0,
           });
-          initialTotalAnswers.current = data.total_answers ?? 0;
           setHistory(
             data.recent.map((a) => ({
               politician_name: a.politician_name,
@@ -77,12 +80,7 @@ export default function App() {
   }, [fetchPolitician]);
 
   useEffect(() => {
-    if (
-      initialTotalAnswers.current !== null &&
-      initialTotalAnswers.current < 10 &&
-      stats.totalAnswers >= 10 &&
-      !localStorage.getItem('support_modal_seen')
-    ) {
+    if (stats.totalAnswers >= 10 && !localStorage.getItem('support_modal_seen')) {
       setShowSupportModal(true);
     }
   }, [stats.totalAnswers]);
@@ -159,6 +157,8 @@ export default function App() {
           <p>Verbindung zum Server fehlgeschlagen.<br />Ist das Backend gestartet?</p>
           <button className="btn-retry" onClick={fetchPolitician}>Nochmal versuchen</button>
         </div>
+      ) : gameState === 'game_over' ? (
+        <GameOverScreen stats={stats} />
       ) : (
         <>
           <PoliticianCard
@@ -183,6 +183,8 @@ export default function App() {
 
       <footer className="page-footer">
         <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
+        <span className="page-footer__separator">|</span>
+        <Link to="/impressum" className="page-footer__link">Impressum</Link>
       </footer>
     </main>
     </>

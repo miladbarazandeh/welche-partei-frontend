@@ -5,6 +5,7 @@ import './index.css';
 import App from './App';
 import StatsPage from './pages/StatsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import ImprintPage from './pages/ImprintPage';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,6 +16,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/stats" element={<StatsPage />} />
         <Route path="/datenschutz" element={<PrivacyPage />} />
+        <Route path="/impressum" element={<ImprintPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
