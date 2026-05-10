@@ -34,7 +34,7 @@ const APPS = [
 ];
 
 const STORAGE_KEY = 'sticky_promo_collapsed';
-const UNLOCK_THRESHOLD = 3;
+const UNLOCK_THRESHOLD = 20;
 
 export default function StickyPromoBar() {
   const [visible, setVisible] = useState(false);
