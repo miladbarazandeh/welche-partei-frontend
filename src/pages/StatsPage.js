@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import AdBanner from '../components/AdBanner';
 import AppPromoCards from '../components/AppPromoCards';
-import CpmAdBanner from '../components/CpmAdBanner';
 
 const API = process.env.REACT_APP_API_URL || '/api';
 
@@ -341,8 +339,6 @@ export default function StatsPage() {
             <ConfusionMatrix matrix={data.confusion_matrix} />
           )}
 
-          <CpmAdBanner />
-          
 
           {data.top_correct.length > 0 && (
             <section className="politician-section">
@@ -377,8 +373,6 @@ export default function StatsPage() {
         </>
       )}
 
-      <AdBanner />
-      <CpmAdBanner />
       <AppPromoCards />
 
       <footer className="page-footer">

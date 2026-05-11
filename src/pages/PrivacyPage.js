@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import AdBanner from '../components/AdBanner';
-
 export default function PrivacyPage() {
   return (
     <main className="privacy-page">
@@ -79,24 +77,14 @@ export default function PrivacyPage() {
         </section>
 
         <section className="privacy-section">
-          <h2 className="privacy-heading">6. Adsterra</h2>
-          <p className="privacy-text">
-            Diese Website zeigt Werbeanzeigen über <strong>Adsterra</strong> (Adsterra Network Ltd, Marshall Islands) an. Adsterra kann beim Einblenden von Anzeigen Cookies setzen und technische Informationen wie IP-Adresse, Browser-Typ und Referrer erheben, um Anzeigen auszuspielen und deren Leistung zu messen.
-          </p>
-          <p className="privacy-text">
-            Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Finanzierung des kostenfreien Angebots). Weitere Informationen findest du in der <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="privacy-link">Datenschutzerklärung von Adsterra</a>.
-          </p>
-        </section>
-
-        <section className="privacy-section">
-          <h2 className="privacy-heading">8. Einwilligungsverwaltung (CMP)</h2>
+          <h2 className="privacy-heading">6. Einwilligungsverwaltung (CMP)</h2>
           <p className="privacy-text">
             Zur Einholung und Verwaltung deiner Einwilligung setzen wir <strong>Google Funding Choices</strong> ein. Dieses Consent-Management-Tool zeigt dir beim ersten Besuch einen Einwilligungsdialog und speichert deine Entscheidung lokal in deinem Browser. Du kannst deine Einwilligung jederzeit über den erneut eingeblendeten Dialog anpassen oder widerrufen.
           </p>
         </section>
 
         <section className="privacy-section">
-          <h2 className="privacy-heading">9. Deine Rechte</h2>
+          <h2 className="privacy-heading">7. Deine Rechte</h2>
           <p className="privacy-text">
             Du hast nach der DSGVO folgende Rechte gegenüber dem Verantwortlichen:
           </p>
@@ -120,7 +108,6 @@ export default function PrivacyPage() {
         <p className="privacy-updated">Stand: Mai 2026</p>
       </div>
 
-      <AdBanner />
     </main>
   );
 }

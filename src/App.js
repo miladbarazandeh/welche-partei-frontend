@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
-import AdBanner from './components/AdBanner';
-import CpmAdBanner from './components/CpmAdBanner';
 import AppPromoCards from './components/AppPromoCards';
 import GameHeader from './components/GameHeader';
 import GameOverScreen from './components/GameOverScreen';
@@ -26,8 +24,7 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [scorePop, setScorePop] = useState(null);
   const [showSupportModal, setShowSupportModal] = useState(false);
-  const [adKey, setAdKey] = useState(0);
-  const nextTimer = useRef(null);
+const nextTimer = useRef(null);
   const { playCorrect, playWrong, muted, toggleMute } = useSoundEffects();
 
   const fetchPolitician = useCallback(async () => {
@@ -188,8 +185,6 @@ export default function App() {
             result={result}
             disabled={gameState !== 'playing'}
           />
-          <AdBanner />
-          <CpmAdBanner key={adKey} />
 
           <GuessHistory history={history} />
           <AppPromoCards />
