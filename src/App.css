@@ -597,13 +597,9 @@
 /* Insight summary cards */
 .insights-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   width: 100%;
-}
-
-@media (max-width: 480px) {
-  .insights-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .insight-card {
