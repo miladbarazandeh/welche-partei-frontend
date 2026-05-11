@@ -341,6 +341,8 @@ export default function StatsPage() {
             <ConfusionMatrix matrix={data.confusion_matrix} />
           )}
 
+          
+
           {data.top_correct.length > 0 && (
             <section className="politician-section">
               <p className="stats-section-heading">Oft richtig geraten</p>
