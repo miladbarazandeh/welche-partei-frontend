@@ -32,8 +32,6 @@ const nextTimer = useRef(null);
     setPolitician(null);
     setResult(null);
     setFlashClass('');
-    setAdKey((k) => k + 1);
-
     try {
       const res = await fetch(`${API}/politicians/random/`, { credentials: 'include' });
       if (!res.ok) throw new Error();
