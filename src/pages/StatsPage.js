@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdBanner from '../components/AdBanner';
 import AppPromoCards from '../components/AppPromoCards';
+import CpmAdBanner from '../components/CpmAdBanner';
 
 const API = process.env.REACT_APP_API_URL || '/api';
 
@@ -246,7 +247,6 @@ export default function StatsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   useEffect(() => {
     fetch(`${API}/global-stats/`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
@@ -341,6 +341,7 @@ export default function StatsPage() {
             <ConfusionMatrix matrix={data.confusion_matrix} />
           )}
 
+          <CpmAdBanner />
           
 
           {data.top_correct.length > 0 && (
@@ -377,6 +378,7 @@ export default function StatsPage() {
       )}
 
       <AdBanner />
+      <CpmAdBanner />
       <AppPromoCards />
 
       <footer className="page-footer">

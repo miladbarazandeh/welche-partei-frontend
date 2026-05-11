@@ -5,6 +5,7 @@ export default function CpmAdBanner() {
       style={{ border: 'none', width: '100%', height: '260px' }}
       scrolling="no"
       title="advertisement"
+      sandbox="allow-scripts allow-popups"
     />
   );
 }
