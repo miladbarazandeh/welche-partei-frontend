@@ -4,7 +4,7 @@ import AppBrand from '../components/AppBrand';
 import AppPromoCards from '../components/AppPromoCards';
 import LegalFooter from '../components/LegalFooter';
 import SettingsMenu from '../components/SettingsMenu';
-import { useCountry, useI18n, usePartyHelpers } from '../context/AppContext';
+import { useCountry, useI18n, usePartyHelpers, usePlayerName } from '../context/AppContext';
 import { countryApiUrl } from '../lib/api';
 
 function InsightCard({ value, label }) {
@@ -157,7 +157,7 @@ function UserRow({ rank, name, correct, total, accuracy, isCurrentUser, t }) {
     <div className={`user-row${isCurrentUser ? ' user-row--current' : ''}`}>
       <span className="user-row__rank">{rank}</span>
       <div className="user-row__info">
-        <span className="user-row__name">{isCurrentUser ? t('stats.you') : (name || '—')}</span>
+        <span className="user-row__name">{(name || '—')}</span>
       </div>
       <div className="user-row__scores">
         <span className="user-row__correct">{correct.toLocaleString()}<span className="user-row__secondary"> / {total.toLocaleString()}</span></span>
@@ -266,6 +266,7 @@ export default function StatsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const {playerName} = usePlayerName();
 
   useEffect(() => {
     setLoading(true);
@@ -451,6 +452,7 @@ export default function StatsPage() {
                 ))}
                 {data.user_rank && !data.top_users.some((u) => u.is_current_user) && (
                   <UserRow
+                    name={playerName}
                     rank={data.user_rank.rank}
                     correct={data.user_rank.correct}
                     total={data.user_rank.total}
