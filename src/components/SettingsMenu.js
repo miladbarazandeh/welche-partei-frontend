@@ -30,7 +30,7 @@ export default function SettingsMenu({ buildCountryHref = (slug) => `/${slug}` }
   const handleSaveName = async () => {
     const trimmed = draftName.trim();
     if (trimmed === playerName) return;
-    if (trimmed.length >= 20) {
+    if (trimmed.length >= 50) {
       setNameError(t('settings.playerNameError'));
       return;
     }
@@ -101,16 +101,18 @@ export default function SettingsMenu({ buildCountryHref = (slug) => `/${slug}` }
                   }}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName(); }}
                   placeholder={t('settings.playerNamePlaceholder')}
-                  maxLength={19}
+                  maxLength={50}
                 />
-                <button
-                  type="button"
-                  className="settings-name__confirm"
-                  onClick={handleSaveName}
-                  aria-label={t('settings.playerNameSaved')}
-                >
-                  ✓
-                </button>
+                {draftName.trim() !== playerName && (
+                  <button
+                    type="button"
+                    className="settings-name__confirm"
+                    onClick={handleSaveName}
+                    aria-label={t('settings.playerNameSaved')}
+                  >
+                    ✓
+                  </button>
+                )}
               </div>
               {nameSaved && <span className="settings-name__saved">{t('settings.playerNameSaved')}</span>}
               {nameError && <span className="settings-name__error">{nameError}</span>}
