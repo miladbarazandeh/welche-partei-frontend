@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COUNTRY_LIST, getCountryName } from '../config/gameConfig';
-import { useCountry, useI18n } from '../context/AppContext';
+import { useCountry, useI18n, usePlayerName } from '../context/AppContext';
+import { patchPlayerName } from '../lib/api';
 
 const LANGUAGE_OPTIONS = [
   { value: 'de', label: 'DE' },
@@ -13,6 +14,36 @@ export default function SettingsMenu({ buildCountryHref = (slug) => `/${slug}` }
   const menuRef = useRef(null);
   const country = useCountry();
   const { locale, setLocale, t } = useI18n();
+  const { playerName, setPlayerName } = usePlayerName();
+  const [draftName, setDraftName] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [nameSaved, setNameSaved] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setDraftName(playerName);
+      setNameError('');
+      setNameSaved(false);
+    }
+  }, [open, playerName]);
+
+  const handleSaveName = async () => {
+    const trimmed = draftName.trim();
+    if (trimmed === playerName) return;
+    if (trimmed.length >= 20) {
+      setNameError(t('settings.playerNameError'));
+      return;
+    }
+    setNameError('');
+    try {
+      await patchPlayerName(trimmed);
+      setPlayerName(trimmed);
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 1500);
+    } catch {
+      setNameError(t('common.retry'));
+    }
+  };
 
   useEffect(() => {
     if (!open) {
@@ -55,6 +86,37 @@ export default function SettingsMenu({ buildCountryHref = (slug) => `/${slug}` }
 
       {open && (
         <div className="settings-panel" role="dialog" aria-label={t('settings.title')}>
+          <div className="settings-panel__section">
+            <p className="settings-panel__label">{t('settings.playerName')}</p>
+            <div className="settings-name">
+              <div className="settings-name__row">
+                <input
+                  type="text"
+                  className="settings-name__input"
+                  value={draftName}
+                  onChange={(e) => {
+                    setDraftName(e.target.value);
+                    setNameError('');
+                    setNameSaved(false);
+                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName(); }}
+                  placeholder={t('settings.playerNamePlaceholder')}
+                  maxLength={19}
+                />
+                <button
+                  type="button"
+                  className="settings-name__confirm"
+                  onClick={handleSaveName}
+                  aria-label={t('settings.playerNameSaved')}
+                >
+                  ✓
+                </button>
+              </div>
+              {nameSaved && <span className="settings-name__saved">{t('settings.playerNameSaved')}</span>}
+              {nameError && <span className="settings-name__error">{nameError}</span>}
+            </div>
+          </div>
+
           <div className="settings-panel__section">
             <p className="settings-panel__label">{t('settings.language')}</p>
             <div className="settings-panel__options">

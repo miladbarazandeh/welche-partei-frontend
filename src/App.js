@@ -8,7 +8,7 @@ import LegalFooter from './components/LegalFooter';
 import PartyGrid from './components/PartyGrid';
 import PoliticianCard from './components/PoliticianCard';
 import SupportModal from './components/SupportModal';
-import { useCountry, useI18n } from './context/AppContext';
+import { useCountry, useI18n, usePlayerName } from './context/AppContext';
 import { useSoundEffects } from './hooks/useSoundEffects';
 import { countryApiUrl, normalizeSessionStats } from './lib/api';
 
@@ -24,6 +24,7 @@ const DEFAULT_STATS = {
 export default function App() {
   const country = useCountry();
   const { t } = useI18n();
+  const { setPlayerName } = usePlayerName();
   const api = countryApiUrl(country.slug);
   const [politician, setPolitician] = useState(null);
   const [gameState, setGameState] = useState('loading');
@@ -34,9 +35,15 @@ export default function App() {
   const [scorePop, setScorePop] = useState(null);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const nextTimer = useRef(null);
+  const attributionOpenRef = useRef(false);
   const { playCorrect, playWrong, muted, toggleMute } = useSoundEffects();
 
   const fetchPolitician = useCallback(async () => {
+    if (attributionOpenRef.current) {
+      nextTimer.current = setTimeout(fetchPolitician, 200);
+      return;
+    }
+
     setGameState('loading');
     setPolitician(null);
     setResult(null);
@@ -67,7 +74,9 @@ export default function App() {
         const res = await fetch(`${api}/stats/`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
-          setStats(normalizeSessionStats(data));
+          const normalized = normalizeSessionStats(data);
+          setStats(normalized);
+          if (normalized.name) setPlayerName(normalized.name);
           setHistory(
             (data.recent || []).map((answer) => ({
               politician_name: answer.politician_name,
@@ -86,7 +95,7 @@ export default function App() {
 
     init();
     return () => clearTimeout(nextTimer.current);
-  }, [api, fetchPolitician]);
+  }, [api, fetchPolitician, setPlayerName]);
 
   useEffect(() => {
     if (stats.totalAnswers >= 10 && !localStorage.getItem('support_modal_seen')) {
@@ -192,6 +201,8 @@ export default function App() {
               flashClass={flashClass}
               result={result}
               gameState={gameState}
+              onAttributionOpen={() => { attributionOpenRef.current = true; }}
+              onAttributionClose={() => { attributionOpenRef.current = false; }}
             />
             <PartyGrid
               onGuess={handleGuess}

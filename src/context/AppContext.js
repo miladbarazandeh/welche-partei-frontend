@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import {
   DEFAULT_COUNTRY,
@@ -10,6 +10,7 @@ import {
 
 const LANGUAGE_KEY = 'app_locale';
 const LAST_COUNTRY_KEY = 'app_last_country';
+const PLAYER_NAME_KEY = 'app_player_name';
 
 const messages = {
   de: {
@@ -40,6 +41,10 @@ const messages = {
     'settings.language': 'Sprache',
     'settings.country': 'Land',
     'settings.current': 'Aktiv',
+    'settings.playerName': 'Spielername',
+    'settings.playerNamePlaceholder': 'Name eingeben…',
+    'settings.playerNameSaved': 'Gespeichert',
+    'settings.playerNameError': 'Max. 19 Zeichen',
     'sound.enable': 'Ton einschalten',
     'sound.disable': 'Ton ausschalten',
     'header.score': 'Score',
@@ -94,6 +99,7 @@ const messages = {
     'stats.matrix.guessed': 'Geraten →',
     'stats.topCorrect': 'Oft richtig geraten',
     'stats.topWrong': 'Oft falsch geraten',
+    'stats.topUsers': 'Bestenliste',
     'stats.confusions': 'Häufigste Verwechslungen',
     'stats.search': 'Politiker suchen…',
     'stats.noResults': 'Keine Ergebnisse für „{query}“',
@@ -111,6 +117,8 @@ const messages = {
     'politician.open': 'Öffnen',
     'politician.attributionMissing':
       'Für dieses Bild liegen keine zusätzlichen Attributionen vor.',
+    'politician.attributionLocked': 'Die Bild-Attribution wird nach deiner Antwort angezeigt.',
+    'common.close': 'Schließen',
     'legal.privacySubtitle': 'Datenschutzerklärung',
     'legal.imprintSubtitle': 'Impressum',
     'country.change': 'Land wechseln',
@@ -143,6 +151,10 @@ const messages = {
     'settings.language': 'Language',
     'settings.country': 'Country',
     'settings.current': 'Current',
+    'settings.playerName': 'Player name',
+    'settings.playerNamePlaceholder': 'Enter a name…',
+    'settings.playerNameSaved': 'Saved',
+    'settings.playerNameError': 'Max. 19 characters',
     'sound.enable': 'Turn sound on',
     'sound.disable': 'Turn sound off',
     'header.score': 'Score',
@@ -196,6 +208,7 @@ const messages = {
     'stats.matrix.guessed': 'Guessed →',
     'stats.topCorrect': 'Often guessed correctly',
     'stats.topWrong': 'Often guessed wrong',
+    'stats.topUsers': 'Leaderboard',
     'stats.confusions': 'Most common confusions',
     'stats.search': 'Search politicians…',
     'stats.noResults': 'No results for "{query}"',
@@ -213,6 +226,8 @@ const messages = {
     'politician.open': 'Open',
     'politician.attributionMissing':
       'No additional attribution metadata is stored for this image.',
+    'politician.attributionLocked': 'Image attribution will be shown after you answer.',
+    'common.close': 'Close',
     'legal.privacySubtitle': 'Privacy Policy',
     'legal.imprintSubtitle': 'Imprint',
     'country.change': 'Switch country',
@@ -221,6 +236,7 @@ const messages = {
 
 const LocaleContext = createContext(null);
 const CountryContext = createContext(null);
+const PlayerNameContext = createContext(null);
 
 function getInitialLocale() {
   if (typeof window === 'undefined') {
@@ -248,6 +264,23 @@ export function getLastCountry() {
   return getCountryConfig(stored) ? stored : DEFAULT_COUNTRY;
 }
 
+function getInitialPlayerName() {
+  return typeof window !== 'undefined' ? window.localStorage.getItem(PLAYER_NAME_KEY) || '' : '';
+}
+
+export function PlayerNameProvider({ children }) {
+  const [playerName, setPlayerNameState] = useState(getInitialPlayerName);
+
+  const setPlayerName = useCallback((name) => {
+    setPlayerNameState(name);
+    window.localStorage.setItem(PLAYER_NAME_KEY, name);
+  }, []);
+
+  const value = useMemo(() => ({ playerName, setPlayerName }), [playerName, setPlayerName]);
+
+  return <PlayerNameContext.Provider value={value}>{children}</PlayerNameContext.Provider>;
+}
+
 export function LanguageProvider({ children }) {
   const [locale, setLocaleState] = useState(getInitialLocale);
 
@@ -268,7 +301,11 @@ export function LanguageProvider({ children }) {
     [locale]
   );
 
-  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+  return (
+    <LocaleContext.Provider value={value}>
+      <PlayerNameProvider>{children}</PlayerNameProvider>
+    </LocaleContext.Provider>
+  );
 }
 
 export function CountryRouteLayout() {
@@ -304,6 +341,14 @@ export function useCountry() {
   const value = useContext(CountryContext);
   if (!value) {
     throw new Error('useCountry must be used within a country route');
+  }
+  return value;
+}
+
+export function usePlayerName() {
+  const value = useContext(PlayerNameContext);
+  if (!value) {
+    throw new Error('usePlayerName must be used within a PlayerNameProvider');
   }
   return value;
 }

@@ -250,10 +250,6 @@ export default function PoliticianPage() {
                   actionLabel={t('politician.open')}
                 />
               )}
-
-              {data.attribution_text && (
-                <p className="attribution-card__text">{data.attribution_text}</p>
-              )}
             </div>
           </section>
         </>

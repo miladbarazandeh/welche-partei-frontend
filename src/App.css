@@ -830,6 +830,72 @@
 .politician-row__count--correct { color: var(--correct); }
 .politician-row__count--wrong   { color: var(--wrong); }
 
+/* User leaderboard row */
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 13px 8px 10px;
+}
+
+.user-row__rank {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-faint);
+  min-width: 14px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.user-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-row__name {
+  font-size: 0.79rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+}
+
+.user-row__stats {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.user-row__accuracy {
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--correct);
+  flex-shrink: 0;
+  min-width: 38px;
+  text-align: right;
+}
+
+.user-row--you {
+  border-color: var(--primary, #6c63ff);
+  background: color-mix(in srgb, var(--primary, #6c63ff) 8%, var(--surface));
+}
+
+.user-row-gap {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  padding: 2px 0;
+  letter-spacing: 0.1em;
+}
+
 /* Confusion pairs */
 .confusion-section {
   width: 100%;
@@ -1044,6 +1110,127 @@
 
 
 /* ── Support Modal ───────────────────────────────────── */
+/* ── Attribution icon button ────────────────────────── */
+.politician-card__attribution-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  backdrop-filter: blur(4px);
+}
+
+.politician-card__attribution-btn:hover {
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+}
+
+/* ── Attribution modal ──────────────────────────────── */
+.attr-modal {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: modalSlideIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.attr-modal__heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.attr-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attr-modal__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.attr-modal__label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.attr-modal__value-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.attr-modal__value {
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.attr-modal__link {
+  font-size: 0.78rem;
+  color: var(--accent, #a78bfa);
+  text-decoration: none;
+}
+
+.attr-modal__link:hover {
+  text-decoration: underline;
+}
+
+.attr-modal__locked {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.attr-modal__close {
+  align-self: flex-end;
+  margin-top: 4px;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.attr-modal__close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
 .support-overlay {
   position: fixed;
   inset: 0;
@@ -2416,6 +2603,74 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgba(150, 120, 255, 0.92);
+}
+
+.settings-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.settings-name__row {
+  display: flex;
+  gap: 6px;
+}
+
+.settings-name__input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.settings-name__input::placeholder {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+.settings-name__input:focus {
+  border-color: rgba(150, 120, 255, 0.5);
+}
+
+.settings-name__confirm {
+  flex-shrink: 0;
+  width: 32px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-name__confirm:hover {
+  background: var(--surface-3);
+  color: #7ecf8e;
+  border-color: rgba(126, 207, 142, 0.4);
+}
+
+.settings-name__saved {
+  font-size: 0.65rem;
+  color: #7ecf8e;
+  font-weight: 600;
+}
+
+.settings-name__error {
+  font-size: 0.65rem;
+  color: #e07070;
+  font-weight: 600;
 }
 
 .header__actions,

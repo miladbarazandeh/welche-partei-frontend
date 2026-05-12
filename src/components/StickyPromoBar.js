@@ -3,15 +3,6 @@ import { useI18n } from '../context/AppContext';
 
 const APPS = [
   {
-    icon: '🇩🇪',
-    name: 'Bürger-Test',
-    desc: {
-      de: 'Teste dein Deutschland-Wissen',
-      en: 'Test your knowledge about Germany',
-    },
-    href: 'https://www.buerger-test.app/',
-  },
-  {
     icon: '✈️',
     name: 'Tripenai',
     desc: {
@@ -20,6 +11,16 @@ const APPS = [
     },
     href: 'https://tripenai.com',
   },
+  {
+    icon: '🇩🇪',
+    name: 'Bürger-Test',
+    desc: {
+      de: 'Teste dein Deutschland-Wissen',
+      en: 'Test your knowledge about Germany',
+    },
+    href: 'https://www.buerger-test.app/',
+  },
+  
   {
     icon: '👶',
     name: 'Name Radar',
