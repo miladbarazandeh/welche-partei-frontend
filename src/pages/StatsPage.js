@@ -152,17 +152,17 @@ function PoliticianRow({
   return <div className={`politician-row politician-row--${cls}`}>{inner}</div>;
 }
 
-function UserRow({ rank, name, correct, total, accuracy, you = false }) {
+function UserRow({ rank, name, correct, total, accuracy, isCurrentUser, t }) {
   return (
-    <div className={`user-row${you ? ' user-row--you' : ''}`}>
+    <div className={`user-row${isCurrentUser ? ' user-row--current' : ''}`}>
       <span className="user-row__rank">{rank}</span>
       <div className="user-row__info">
-        <span className="user-row__name">{name || '—'}</span>
+        <span className="user-row__name">{isCurrentUser ? t('stats.you') : (name || '—')}</span>
       </div>
-      <span className="user-row__stats">
-        {correct.toLocaleString()}/{total.toLocaleString()}
-      </span>
-      <span className="user-row__accuracy">{accuracy}%</span>
+      <div className="user-row__scores">
+        <span className="user-row__correct">{correct.toLocaleString()}<span className="user-row__secondary"> / {total.toLocaleString()}</span></span>
+        <span className="user-row__secondary">{accuracy}%</span>
+      </div>
     </div>
   );
 }
@@ -268,6 +268,10 @@ export default function StatsPage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    setData(null);
+    setError(false);
+
     fetch(countryApiUrl(country.slug, '/global-stats/'), { credentials: 'include' })
       .then((response) => {
         if (!response.ok) {
@@ -432,25 +436,29 @@ export default function StatsPage() {
             </section>
           )}
 
-          {(data.top_users?.length > 0 || data.current_user_ranking) && (
+          {data.top_users?.length > 0 && (
             <section className="politician-section">
               <p className="stats-section-heading">{t('stats.topUsers')}</p>
               <div className="politician-list">
-                {data.top_users?.map((user, index) => (
+                {data.top_users.map((user, index) => (
                   <UserRow
                     key={index}
                     rank={index + 1}
-                    you={data.current_user_ranking?.rank === index + 1}
+                    isCurrentUser={user.is_current_user}
+                    t={t}
                     {...user}
                   />
                 ))}
-                {data.current_user_ranking &&
-                  data.current_user_ranking.rank > (data.top_users?.length ?? 0) && (
-                    <>
-                      <div className="user-row-gap">…</div>
-                      <UserRow you rank={data.current_user_ranking.rank} {...data.current_user_ranking} />
-                    </>
-                  )}
+                {data.user_rank && !data.top_users.some((u) => u.is_current_user) && (
+                  <UserRow
+                    rank={data.user_rank.rank}
+                    correct={data.user_rank.correct}
+                    total={data.user_rank.total}
+                    accuracy={data.user_rank.accuracy}
+                    isCurrentUser
+                    t={t}
+                  />
+                )}
               </div>
             </section>
           )}
