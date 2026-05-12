@@ -1,53 +1,53 @@
 import { Link } from 'react-router-dom';
+import AppBrand from './AppBrand';
+import SettingsMenu from './SettingsMenu';
+import { useCountry, useI18n } from '../context/AppContext';
 
 export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop }) {
-  const spectrumDisplay = totalAnswers > 0 && spectrumAccuracy != null
-    ? `${Math.round(spectrumAccuracy)}%`
-    : '—';
+  const country = useCountry();
+  const { t } = useI18n();
+  const spectrumDisplay =
+    totalAnswers > 0 && spectrumAccuracy != null ? `${Math.round(spectrumAccuracy)}%` : t('common.notAvailable');
 
   return (
     <header className="header">
       <div className="header__top">
-        <div className="header__brand">
-          <div className="header__flag" aria-hidden="true">
-            <span /><span /><span />
-          </div>
-          <div className="header__titles">
-            <h1 className="header__title">Welche Partei?</h1>
-            <p className="header__subtitle">Politiker-Partei erraten</p>
-          </div>
-        </div>
-        <div className="header__nav">
-          <Link to="/stats" className="stats-nav-btn">Statistiken</Link>
-          <a
-            href="https://buymeacoffee.com/welche.partei"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bmc-btn"
-          >
-            Support ☕
-          </a>
-        </div>
+        <AppBrand subtitle={t('app.subtitle')} />
+        <SettingsMenu />
+      </div>
+
+      <div className="header__actions">
+        <Link to={`/${country.slug}/stats`} className="stats-nav-btn">{t('nav.stats')}</Link>
+        <a
+          href="https://buymeacoffee.com/welche.partei"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bmc-btn"
+        >
+          {t('nav.support')} ☕
+        </a>
       </div>
 
       <div className="stats">
         <div className="stat">
           {scorePop && <span key={scorePop} className="score-pop">+1</span>}
           <span className="stat__value">{score}</span>
-          <span className="stat__label">Score</span>
+          <span className="stat__label">{t('header.score')}</span>
         </div>
         <div className="stat stat--streak">
-          <span className="stat__value">{streak > 0 ? `🔥${streak}` : '—'}</span>
-          <span className="stat__label">Serie</span>
+          <span className="stat__value">{streak > 0 ? `🔥${streak}` : t('common.notAvailable')}</span>
+          <span className="stat__label">{t('header.streak')}</span>
         </div>
         <div className="stat">
           <span className="stat__value">{best}</span>
-          <span className="stat__label">Rekord</span>
+          <span className="stat__label">{t('header.best')}</span>
         </div>
-        <div className="stat stat--spectrum">
-          <span className="stat__value">{spectrumDisplay}</span>
-          <span className="stat__label">Spektrum</span>
-        </div>
+        {country.supportsSpectrum && (
+          <div className="stat stat--spectrum">
+            <span className="stat__value">{spectrumDisplay}</span>
+            <span className="stat__label">{t('header.spectrum')}</span>
+          </div>
+        )}
       </div>
     </header>
   );

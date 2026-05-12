@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { getCountryConfig, getPartyLabel } from './config/gameConfig';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('exposes country config for Germany and the US', () => {
+  expect(getCountryConfig('de')?.partyOrder).toContain('SPD');
+  expect(getCountryConfig('us')?.partyOrder).toContain('Democratic');
+  expect(getPartyLabel('us', 'Republican', 'de')).toBe('Republikaner');
 });

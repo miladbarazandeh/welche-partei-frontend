@@ -1,4 +1,8 @@
+import { usePartyHelpers } from '../context/AppContext';
+
 export default function PoliticianCard({ politician, flashClass, result, gameState }) {
+  const { partyLabel } = usePartyHelpers();
+
   if (!politician) {
     return (
       <div className="card-wrap">
@@ -33,7 +37,7 @@ export default function PoliticianCard({ politician, flashClass, result, gameSta
               <img
                 className="politician-card__photo"
                 src={politician.image_path}
-                alt="Politiker"
+                alt={politician.name}
               />
             </>
           ) : (
@@ -58,7 +62,9 @@ export default function PoliticianCard({ politician, flashClass, result, gameSta
                 <span className="politician-card__result-parliament">{politician.parliament}</span>
               )}
               {!result.correct && (
-                <span className="politician-card__result-party">→ {result.correct_party}</span>
+                <span className="politician-card__result-party">
+                  → {partyLabel(result.correct_party)}
+                </span>
               )}
             </div>
           )}

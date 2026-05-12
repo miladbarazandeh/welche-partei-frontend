@@ -1,34 +1,50 @@
 import { useState } from 'react';
+import { useI18n } from '../context/AppContext';
 
 const APPS = [
   {
     icon: '🇩🇪',
     name: 'Bürger-Test',
-    desc: 'Teste dein Deutschland-Wissen',
+    desc: {
+      de: 'Teste dein Deutschland-Wissen',
+      en: 'Test your knowledge about Germany',
+    },
     href: 'https://www.buerger-test.app/',
   },
   {
     icon: '✈️',
     name: 'Tripenai',
-    desc: 'Deine ganze Reise in einer App',
+    desc: {
+      de: 'Deine ganze Reise in einer App',
+      en: 'Your whole trip in one app',
+    },
     href: 'https://tripenai.com',
   },
   {
     icon: '👶',
     name: 'Name Radar',
-    desc: 'Deutsche Vornamen entdecken',
+    desc: {
+      de: 'Deutsche Vornamen entdecken',
+      en: 'Discover German first names',
+    },
     href: 'https://name-radar.de/',
   },
   {
     icon: '📖',
     name: 'Memo',
-    desc: 'Deutsche Wörter lernen',
+    desc: {
+      de: 'Deutsche Wörter lernen',
+      en: 'Learn German words',
+    },
     href: 'https://apps.apple.com/de/app/memo-learn-german-words/id6746387251',
   },
   {
     icon: '📓',
     name: 'Plus Minus Next',
-    desc: 'Dein tägliches Tagebuch',
+    desc: {
+      de: 'Dein tägliches Tagebuch',
+      en: 'Your daily journal',
+    },
     href: 'https://apps.apple.com/de/app/daily-journal-plus-minus-next/id6759860431',
   },
 ];
@@ -36,7 +52,11 @@ const APPS = [
 const STORAGE_KEY = 'sticky_promo_collapsed';
 
 export default function StickyPromoBar() {
-  const [collapsed, setCollapsed] = useState(true);
+  const { locale, t } = useI18n();
+  const [collapsed, setCollapsed] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored !== '0';
+  });
 
   const toggle = () => {
     const next = !collapsed;
@@ -46,8 +66,8 @@ export default function StickyPromoBar() {
 
   return (
     <div className={`sticky-promo${collapsed ? ' sticky-promo--collapsed' : ''}`}>
-      <button className="sticky-promo__handle" onClick={toggle} aria-label="Apps ein-/ausblenden">
-        <span className="sticky-promo__handle-label">Unsere Apps</span>
+      <button className="sticky-promo__handle" onClick={toggle} aria-label={t('sticky.toggle')}>
+        <span className="sticky-promo__handle-label">{t('sticky.label')}</span>
         <span className="sticky-promo__chevron">{collapsed ? '▲' : '▼'}</span>
       </button>
 
@@ -63,7 +83,7 @@ export default function StickyPromoBar() {
             <span className="sticky-promo__icon">{app.icon}</span>
             <div className="sticky-promo__text">
               <span className="sticky-promo__name">{app.name}</span>
-              <span className="sticky-promo__desc">{app.desc}</span>
+              <span className="sticky-promo__desc">{app.desc[locale] || app.desc.en}</span>
             </div>
             <span className="sticky-promo__arrow">→</span>
           </a>

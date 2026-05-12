@@ -1,17 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AppBrand from '../components/AppBrand';
 import AppPromoCards from '../components/AppPromoCards';
-
-const API = process.env.REACT_APP_API_URL || '/api';
-
-const PARTY_CLASS = {
-  'SPD': 'spd',
-  'CDU/CSU': 'cducsu',
-  'Grüne': 'gruene',
-  'AfD': 'afd',
-  'Die Linke': 'linke',
-  'FDP': 'fdp',
-};
+import LegalFooter from '../components/LegalFooter';
+import SettingsMenu from '../components/SettingsMenu';
+import { useCountry, useI18n, usePartyHelpers } from '../context/AppContext';
+import { countryApiUrl } from '../lib/api';
 
 function InsightCard({ value, label }) {
   return (
@@ -22,79 +16,77 @@ function InsightCard({ value, label }) {
   );
 }
 
-function PartyBar({ party, total, correct, accuracy }) {
-  const cls = PARTY_CLASS[party] || '';
+function PartyBar({ party, total, correct, accuracy, partyLabel, partySlug }) {
+  const cls = partySlug(party);
+
   return (
     <div className="party-bar">
       <div className="party-bar__meta">
-        <span className={`party-bar__name party-bar__name--${cls}`}>{party}</span>
+        <span className={`party-bar__name party-bar__name--${cls}`}>{partyLabel(party)}</span>
         <div className="party-bar__right">
-          <span className="party-bar__count">{correct.toLocaleString()}/{total.toLocaleString()}</span>
+          <span className="party-bar__count">
+            {correct.toLocaleString()}/{total.toLocaleString()}
+          </span>
           <span className="party-bar__pct">{accuracy}%</span>
         </div>
       </div>
       <div className="party-bar__track">
-        <div
-          className={`party-bar__fill party-bar__fill--${cls}`}
-          style={{ width: `${accuracy}%` }}
-        />
+        <div className={`party-bar__fill party-bar__fill--${cls}`} style={{ width: `${accuracy}%` }} />
       </div>
     </div>
   );
 }
 
-const SHORT_PARTY = {
-  'SPD': 'SPD',
-  'CDU/CSU': 'CDU',
-  'Grüne': 'Grüne',
-  'AfD': 'AfD',
-  'Die Linke': 'Linke',
-  'FDP': 'FDP',
-};
+function ConfusionMatrix({ matrix, partyLabel, partyShortLabel, partySlug, t }) {
+  const parties = matrix.map((row) => row.actual);
 
-function ConfusionMatrix({ matrix }) {
-  const parties = matrix.map(r => r.actual);
   return (
     <section className="confusion-section">
-      <p className="stats-section-heading">Verwechslungsmatrix</p>
+      <p className="stats-section-heading">{t('stats.matrix')}</p>
       <div className="cm-wrap">
         <table className="cm-table">
           <thead>
             <tr>
               <th className="cm-th-corner">
                 <div className="cm-th-corner-inner">
-                  <span>Ist ↓</span>
-                  <span>Geraten →</span>
+                  <span>{t('stats.matrix.actual')}</span>
+                  <span>{t('stats.matrix.guessed')}</span>
                 </div>
               </th>
-              {parties.map(p => (
-                <th key={p} className={`cm-th-col cm-th-col--${PARTY_CLASS[p] || ''}`}>
-                  {SHORT_PARTY[p] ?? p}
+              {parties.map((party) => (
+                <th
+                  key={party}
+                  className={`cm-th-col cm-th-col--${partySlug(party)}`}
+                  title={partyLabel(party)}
+                >
+                  {partyShortLabel(party)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {matrix.map(row => (
+            {matrix.map((row) => (
               <tr key={row.actual}>
-                <td className={`cm-td-label cm-td-label--${PARTY_CLASS[row.actual] || ''}`}>
-                  {row.actual}
+                <td className={`cm-td-label cm-td-label--${partySlug(row.actual)}`}>
+                  {partyLabel(row.actual)}
                 </td>
-                {parties.map(guessed => {
+                {parties.map((guessed) => {
                   const cell = row.guesses?.[guessed];
                   const pct = cell?.pct ?? 0;
                   const isCorrect = guessed === row.actual;
-                  const cls = pct === 0
-                    ? 'cm-td-cell cm-td-cell--zero'
-                    : isCorrect
-                      ? 'cm-td-cell cm-td-cell--correct'
-                      : 'cm-td-cell cm-td-cell--wrong';
+                  const cls =
+                    pct === 0
+                      ? 'cm-td-cell cm-td-cell--zero'
+                      : isCorrect
+                        ? 'cm-td-cell cm-td-cell--correct'
+                        : 'cm-td-cell cm-td-cell--wrong';
+
                   return (
                     <td
                       key={guessed}
                       className={cls}
                       style={{ '--i': pct / 100 }}
-                      title={`${row.actual} → ${guessed}: ${pct}%`}
+                      title={`${partyLabel(row.actual)} → ${partyLabel(guessed)}: ${pct}%`}
                     >
                       {pct > 0 ? `${pct}%` : '–'}
                     </td>
@@ -109,62 +101,67 @@ function ConfusionMatrix({ matrix }) {
   );
 }
 
-function ConfusionRow({ actual, guessed, count }) {
+function ConfusionRow({ actual, guessed, count, partyLabel, partySlug }) {
   return (
     <div className="confusion-row">
-      <span className={`party-tag party-tag--${PARTY_CLASS[actual]}`}>{actual}</span>
+      <span className={`party-tag party-tag--${partySlug(actual)}`}>{partyLabel(actual)}</span>
       <span className="confusion-row__arrow">→</span>
-      <span className={`party-tag party-tag--${PARTY_CLASS[guessed]}`}>{guessed}</span>
+      <span className={`party-tag party-tag--${partySlug(guessed)}`}>{partyLabel(guessed)}</span>
       <span className="confusion-row__count">{count.toLocaleString()}×</span>
     </div>
   );
 }
 
-function PoliticianRow({ id, reference, rank, name, party, image, accuracy, variant }) {
-  const cls = PARTY_CLASS[party] || '';
-  const linkTarget = reference || id;
+function PoliticianRow({
+  countrySlug,
+  reference,
+  rank,
+  name,
+  party,
+  image,
+  accuracy,
+  variant,
+  partyLabel,
+  partySlug,
+}) {
+  const cls = partySlug(party);
+  const linkTarget = reference ? `/${countrySlug}/politicians/${reference}` : null;
   const inner = (
     <>
       <span className="politician-row__rank">{rank}</span>
       <div className="politician-row__avatar">
-        {image
-          ? <img src={image} alt={name} className="politician-row__img" />
-          : <span className="politician-row__img-placeholder" />
-        }
+        {image ? <img src={image} alt={name} className="politician-row__img" /> : <span className="politician-row__img-placeholder" />}
       </div>
       <div className="politician-row__info">
         <span className="politician-row__name">{name}</span>
-        <span className={`party-tag party-tag--${cls}`}>{party}</span>
+        <span className={`party-tag party-tag--${cls}`}>{partyLabel(party)}</span>
       </div>
-      <span className={`politician-row__count politician-row__count--${variant}`}>
-        {accuracy}%
-      </span>
+      <span className={`politician-row__count politician-row__count--${variant}`}>{accuracy}%</span>
       {linkTarget && <span className="politician-row__chevron">›</span>}
     </>
   );
 
   if (linkTarget) {
     return (
-      <Link to={`/politicians/${linkTarget}`} className={`politician-row politician-row--${cls} politician-row--link`}>
+      <Link to={linkTarget} className={`politician-row politician-row--${cls} politician-row--link`}>
         {inner}
       </Link>
     );
   }
-  return (
-    <div className={`politician-row politician-row--${cls}`}>
-      {inner}
-    </div>
-  );
+
+  return <div className={`politician-row politician-row--${cls}`}>{inner}</div>;
 }
 
-function PoliticianSearch() {
+function PoliticianSearch({ countrySlug, partyLabel, partySlug, t }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef(null);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
     if (query.trim().length < 2) {
       setResults([]);
@@ -174,14 +171,20 @@ function PoliticianSearch() {
 
     setLoading(true);
     debounceRef.current = setTimeout(() => {
-      fetch(`${API}/politicians/search/?q=${encodeURIComponent(query.trim())}`)
-        .then(r => r.json())
-        .then(d => { setResults(d); setLoading(false); })
-        .catch(() => { setResults([]); setLoading(false); });
+      fetch(countryApiUrl(countrySlug, `/politicians/search/?q=${encodeURIComponent(query.trim())}`))
+        .then((response) => response.json())
+        .then((data) => {
+          setResults(data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setResults([]);
+          setLoading(false);
+        });
     }, 300);
 
     return () => clearTimeout(debounceRef.current);
-  }, [query]);
+  }, [countrySlug, query]);
 
   const showResults = query.trim().length >= 2;
 
@@ -190,16 +193,16 @@ function PoliticianSearch() {
       <div className="pol-search__input-wrap">
         <span className="pol-search__icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M9 9L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M9 9L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </span>
         <input
           className="pol-search__input"
           type="search"
-          placeholder="Politiker suchen…"
+          placeholder={t('stats.search')}
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(event) => setQuery(event.target.value)}
           autoComplete="off"
           spellCheck={false}
         />
@@ -209,32 +212,32 @@ function PoliticianSearch() {
       {showResults && (
         <div className="pol-search__results" role="list">
           {results.length === 0 && !loading && (
-            <p className="pol-search__empty">Keine Ergebnisse für „{query.trim()}"</p>
+            <p className="pol-search__empty">{t('stats.noResults', { query: query.trim() })}</p>
           )}
-          {results.map(p => {
-            const cls = PARTY_CLASS[p.party] || '';
-            return (
-              <Link
-                key={p.reference}
-                to={`/politicians/${p.reference}`}
-                className="pol-search__result"
-                role="listitem"
-              >
-                <div className="pol-search__avatar">
-                  {p.image
-                    ? <img src={p.image} alt={p.name} />
-                    : <span className="pol-search__avatar-placeholder" />
-                  }
-                </div>
-                <div className="pol-search__meta">
-                  <span className="pol-search__name">{p.name}</span>
-                  <span className="pol-search__parliament">{p.parliament}</span>
-                </div>
-                <span className={`party-tag party-tag--${cls}`}>{p.party}</span>
-                <span className="pol-search__arrow" aria-hidden="true">›</span>
-              </Link>
-            );
-          })}
+          {results.map((politician) => (
+            <Link
+              key={politician.reference}
+              to={`/${countrySlug}/politicians/${politician.reference}`}
+              className="pol-search__result"
+              role="listitem"
+            >
+              <div className="pol-search__avatar">
+                {politician.image ? (
+                  <img src={politician.image} alt={politician.name} />
+                ) : (
+                  <span className="pol-search__avatar-placeholder" />
+                )}
+              </div>
+              <div className="pol-search__meta">
+                <span className="pol-search__name">{politician.name}</span>
+                <span className="pol-search__parliament">{politician.parliament}</span>
+              </div>
+              <span className={`party-tag party-tag--${partySlug(politician.party)}`}>
+                {partyLabel(politician.party)}
+              </span>
+              <span className="pol-search__arrow" aria-hidden="true">›</span>
+            </Link>
+          ))}
         </div>
       )}
     </div>
@@ -242,82 +245,107 @@ function PoliticianSearch() {
 }
 
 export default function StatsPage() {
+  const country = useCountry();
+  const { t } = useI18n();
+  const { partyLabel, partyShortLabel, partySlug } = usePartyHelpers();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
   useEffect(() => {
-    fetch(`${API}/global-stats/`)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(d => { setData(d); setLoading(false); })
-      .catch(() => { setError(true); setLoading(false); });
-  }, []);
+    fetch(countryApiUrl(country.slug, '/global-stats/'))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('global stats failed');
+        }
+        return response.json();
+      })
+      .then((payload) => {
+        setData(payload);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  }, [country.slug]);
 
   return (
     <main className="stats-page">
       <header className="stats-header">
-        <div className="header__brand">
-          <div className="header__flag" aria-hidden="true">
-            <span /><span /><span />
-          </div>
-          <div className="header__titles">
-            <h1 className="header__title">Welche Partei?</h1>
-            <p className="header__subtitle">Statistiken</p>
-          </div>
+        <div className="stats-header__top">
+          <AppBrand subtitle={t('stats.subtitle')} />
+          <SettingsMenu buildCountryHref={(slug) => `/${slug}/stats`} />
         </div>
-        <Link to="/" className="stats-back-btn">← Spielen</Link>
+        <div className="stats-header__actions">
+          <Link to={`/${country.slug}`} className="stats-back-btn">
+            ← {t('nav.backToGame')}
+          </Link>
+        </div>
       </header>
 
-      <PoliticianSearch />
+      <PoliticianSearch
+        countrySlug={country.slug}
+        partyLabel={partyLabel}
+        partySlug={partySlug}
+        t={t}
+      />
 
       {loading && (
         <div className="stats-loading">
-          <span>Lade Statistiken…</span>
+          <span>{t('stats.loading')}</span>
         </div>
       )}
 
       {error && (
         <div className="error-state">
           <span className="error-state__icon">⚠️</span>
-          <p>Statistiken konnten nicht geladen werden.</p>
-          <Link to="/" className="btn-retry">Zurück zum Spiel</Link>
+          <p>{t('stats.error')}</p>
+          <Link to={`/${country.slug}`} className="btn-retry">
+            {t('nav.backToGame')}
+          </Link>
         </div>
       )}
 
       {data && (
         <>
           <div className="insights-grid">
-            <InsightCard value={data.total_answers.toLocaleString()} label="Antworten" />
-            <InsightCard value={`${data.overall_accuracy}%`} label="Genauigkeit" />
-            <InsightCard value={data.unique_players.toLocaleString()} label="Spieler" />
-            <InsightCard value={data.global_best_streak} label="Rekord-Serie" />
+            <InsightCard value={data.total_answers.toLocaleString()} label={t('stats.answers')} />
+            <InsightCard value={`${data.overall_accuracy}%`} label={t('stats.accuracy')} />
+            <InsightCard value={data.unique_players.toLocaleString()} label={t('stats.players')} />
+            <InsightCard value={data.global_best_streak} label={t('stats.bestStreak')} />
           </div>
 
           {data.spectrum_accuracy != null && (
             <section className="leaning-section">
-              <p className="stats-section-heading">Links / Rechts Genauigkeit</p>
+              <p className="stats-section-heading">{t('stats.leftRight')}</p>
               <div className="leaning-summary">
                 <div className="leaning-summary__global">
                   <span className="leaning-summary__value">{data.spectrum_accuracy}%</span>
-                  <span className="leaning-summary__label">Global Spektrum</span>
+                  <span className="leaning-summary__label">{t('stats.globalSpectrum')}</span>
                 </div>
               </div>
               {data.leaning_stats && data.leaning_stats.length > 0 && (
                 <div className="leaning-bars">
-                  {data.leaning_stats.map(ls => (
-                    <div key={ls.leaning} className={`leaning-bar leaning-bar--${ls.leaning}`}>
+                  {data.leaning_stats.map((leaning) => (
+                    <div key={leaning.leaning} className={`leaning-bar leaning-bar--${leaning.leaning}`}>
                       <div className="leaning-bar__header">
                         <span className="leaning-bar__name">
-                          {ls.leaning === 'left' ? '← Links' : 'Rechts →'}
+                          {leaning.leaning === 'left' ? t('stats.left') : t('stats.right')}
                         </span>
                         <div className="leaning-bar__stats">
-                          <span className="leaning-bar__exact">{ls.accuracy}% exakt</span>
-                          <span className="leaning-bar__spectrum">{ls.spectrum_accuracy}% Seite</span>
+                          <span className="leaning-bar__exact">
+                            {t('stats.exact', { value: leaning.accuracy })}
+                          </span>
+                          <span className="leaning-bar__spectrum">
+                            {t('stats.side', { value: leaning.spectrum_accuracy })}
+                          </span>
                         </div>
                       </div>
                       <div className="party-bar__track">
                         <div
-                          className={`party-bar__fill leaning-bar__fill--${ls.leaning}`}
-                          style={{ width: `${ls.spectrum_accuracy}%` }}
+                          className={`party-bar__fill leaning-bar__fill--${leaning.leaning}`}
+                          style={{ width: `${leaning.spectrum_accuracy}%` }}
                         />
                       </div>
                     </div>
@@ -328,45 +356,79 @@ export default function StatsPage() {
           )}
 
           <section className="party-accuracy">
-            <p className="stats-section-heading">Genauigkeit pro Partei</p>
-            {[...data.party_stats]
-              .sort((a, b) => b.accuracy - a.accuracy)
-              .map(p => <PartyBar key={p.party} {...p} />)
-            }
+            <p className="stats-section-heading">{t('stats.byParty')}</p>
+            {[...(data.party_stats || [])]
+              .sort((left, right) => right.accuracy - left.accuracy)
+              .map((party) => (
+                <PartyBar
+                  key={party.party}
+                  {...party}
+                  partyLabel={partyLabel}
+                  partySlug={partySlug}
+                />
+              ))}
           </section>
 
           {data.confusion_matrix?.length > 0 && (
-            <ConfusionMatrix matrix={data.confusion_matrix} />
+            <ConfusionMatrix
+              matrix={data.confusion_matrix}
+              partyLabel={partyLabel}
+              partyShortLabel={partyShortLabel}
+              partySlug={partySlug}
+              t={t}
+            />
           )}
 
-
-          {data.top_correct.length > 0 && (
+          {data.top_correct?.length > 0 && (
             <section className="politician-section">
-              <p className="stats-section-heading">Oft richtig geraten</p>
+              <p className="stats-section-heading">{t('stats.topCorrect')}</p>
               <div className="politician-list">
-                {data.top_correct.map((p, i) => (
-                  <PoliticianRow key={p.id ?? i} rank={i + 1} {...p} variant="correct" />
+                {data.top_correct.map((politician, index) => (
+                  <PoliticianRow
+                    key={politician.reference ?? index}
+                    countrySlug={country.slug}
+                    rank={index + 1}
+                    variant="correct"
+                    partyLabel={partyLabel}
+                    partySlug={partySlug}
+                    {...politician}
+                  />
                 ))}
               </div>
             </section>
           )}
 
-          {data.top_wrong.length > 0 && (
+          {data.top_wrong?.length > 0 && (
             <section className="politician-section">
-              <p className="stats-section-heading">Oft falsch geraten</p>
+              <p className="stats-section-heading">{t('stats.topWrong')}</p>
               <div className="politician-list">
-                {data.top_wrong.map((p, i) => (
-                  <PoliticianRow key={p.id ?? i} rank={i + 1} {...p} variant="wrong" />
+                {data.top_wrong.map((politician, index) => (
+                  <PoliticianRow
+                    key={politician.reference ?? index}
+                    countrySlug={country.slug}
+                    rank={index + 1}
+                    variant="wrong"
+                    partyLabel={partyLabel}
+                    partySlug={partySlug}
+                    {...politician}
+                  />
                 ))}
               </div>
             </section>
           )}
 
-          {data.confusion.length > 0 && (
+          {data.confusion?.length > 0 && (
             <section className="confusion-section">
-              <p className="stats-section-heading">Häufigste Verwechslungen</p>
+              <p className="stats-section-heading">{t('stats.confusions')}</p>
               <div className="confusion-list">
-                {data.confusion.map((c, i) => <ConfusionRow key={i} {...c} />)}
+                {data.confusion.map((entry, index) => (
+                  <ConfusionRow
+                    key={index}
+                    {...entry}
+                    partyLabel={partyLabel}
+                    partySlug={partySlug}
+                  />
+                ))}
               </div>
             </section>
           )}
@@ -374,10 +436,7 @@ export default function StatsPage() {
       )}
 
       <AppPromoCards />
-
-      <footer className="page-footer">
-        <Link to="/datenschutz" className="page-footer__link">Datenschutz</Link>
-      </footer>
+      <LegalFooter country={country.slug} />
     </main>
   );
 }

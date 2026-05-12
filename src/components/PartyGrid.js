@@ -1,22 +1,22 @@
-const PARTY_SLUG = {
-  'SPD': 'spd',
-  'CDU/CSU': 'cducsu',
-  'Grüne': 'gruene',
-  'AfD': 'afd',
-  'Die Linke': 'linke',
-  'FDP': 'fdp',
-};
-
-// Left parties in left column, right parties in right column (paired by row)
-const PARTIES = ['SPD', 'CDU/CSU', 'Grüne', 'FDP', 'Die Linke', 'AfD'];
+import { useCountry, useI18n, usePartyHelpers } from '../context/AppContext';
 
 export default function PartyGrid({ onGuess, result, disabled }) {
+  const country = useCountry();
+  const { t } = useI18n();
+  const { partyLabel, partySlug } = usePartyHelpers();
+
   return (
-    <div className="party-grid">
-      <span className="party-grid__label">← Links</span>
-      <span className="party-grid__label party-grid__label--right">Rechts →</span>
-      {PARTIES.map((party) => {
-        const slug = PARTY_SLUG[party];
+    <div className={`party-grid${country.supportsSpectrum ? '' : ' party-grid--neutral'}`}>
+      {country.supportsSpectrum ? (
+        <>
+          <span className="party-grid__label">{t('game.left')}</span>
+          <span className="party-grid__label party-grid__label--right">{t('game.right')}</span>
+        </>
+      ) : (
+        <span className="party-grid__label party-grid__label--full">{t('game.pickParty')}</span>
+      )}
+      {country.partyOrder.map((party) => {
+        const slug = partySlug(party);
         let stateClass = '';
 
         if (result) {
@@ -36,7 +36,7 @@ export default function PartyGrid({ onGuess, result, disabled }) {
             onClick={() => !disabled && onGuess(party)}
             disabled={disabled}
           >
-            {party}
+            {partyLabel(party)}
           </button>
         );
       })}

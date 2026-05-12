@@ -1,3 +1,4 @@
+import { useI18n } from '../context/AppContext';
 import AppPromoCards from './AppPromoCards';
 
 const BMC_URL = 'https://buymeacoffee.com/welche.partei';
@@ -8,33 +9,32 @@ function resetSession() {
 }
 
 export default function GameOverScreen({ stats }) {
+  const { t } = useI18n();
   const accuracy = stats.spectrumAccuracy !== null ? Math.round(stats.spectrumAccuracy) : null;
 
   return (
     <div className="game-over">
       <div className="game-over__trophy">🏆</div>
-      <h2 className="game-over__title">Alle Politiker erraten!</h2>
-      <p className="game-over__subtitle">
-        Du hast das komplette Bundestagsspiel durchgespielt. Respekt!
-      </p>
+      <h2 className="game-over__title">{t('game.over.title')}</h2>
+      <p className="game-over__subtitle">{t('game.over.subtitle')}</p>
 
       <div className="game-over__stats">
         <div className="game-over__stat">
           <span className="game-over__stat-value">{stats.score}</span>
-          <span className="game-over__stat-label">Punkte</span>
+          <span className="game-over__stat-label">{t('game.over.points')}</span>
         </div>
         <div className="game-over__stat">
           <span className="game-over__stat-value">{stats.best}</span>
-          <span className="game-over__stat-label">Best Streak</span>
+          <span className="game-over__stat-label">{t('game.over.best')}</span>
         </div>
         <div className="game-over__stat">
           <span className="game-over__stat-value">{stats.totalAnswers}</span>
-          <span className="game-over__stat-label">Beantwortet</span>
+          <span className="game-over__stat-label">{t('game.over.answered')}</span>
         </div>
         {accuracy !== null && (
           <div className="game-over__stat">
             <span className="game-over__stat-value">{accuracy}%</span>
-            <span className="game-over__stat-label">Genauigkeit</span>
+            <span className="game-over__stat-label">{t('game.over.accuracy')}</span>
           </div>
         )}
       </div>
@@ -46,10 +46,10 @@ export default function GameOverScreen({ stats }) {
           rel="noopener noreferrer"
           className="game-over__btn game-over__btn--coffee"
         >
-          ☕ Kaffee spendieren
+          ☕ {t('game.over.support')}
         </a>
         <button className="game-over__btn game-over__btn--reset" onClick={resetSession}>
-          Neu starten
+          {t('game.over.restart')}
         </button>
       </div>
 
