@@ -612,6 +612,25 @@
   font-size: 0.88rem;
 }
 
+.ad-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.ad-banner__slot {
+  width: min(300px, 100%);
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ad-banner--desktop .ad-banner__slot {
+  min-height: 250px;
+}
+
 /* Insight summary cards */
 .insights-grid {
   display: grid;
