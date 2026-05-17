@@ -1,4 +1,4 @@
-export const DEFAULT_COUNTRY = 'de';
+export const DEFAULT_COUNTRY = 'us';
 
 export const COUNTRY_CONFIG = {
   de: {
@@ -103,10 +103,11 @@ export const COUNTRY_CONFIG = {
   },
 };
 
-export const COUNTRY_LIST = Object.values(COUNTRY_CONFIG);
+export const COUNTRY_LIST = [COUNTRY_CONFIG.us];
 
 export function getCountryConfig(countrySlug) {
-  return COUNTRY_CONFIG[(countrySlug || '').toLowerCase()] || null;
+  const config = COUNTRY_CONFIG[(countrySlug || '').toLowerCase()] || null;
+  return config && COUNTRY_LIST.includes(config) ? config : null;
 }
 
 export function getCountryName(countrySlug, locale = 'en') {
