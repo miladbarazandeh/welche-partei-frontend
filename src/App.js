@@ -7,7 +7,6 @@ import GuessHistory from './components/GuessHistory';
 import LegalFooter from './components/LegalFooter';
 import PartyGrid from './components/PartyGrid';
 import PoliticianCard from './components/PoliticianCard';
-import ResponsiveAdBanner from './components/ResponsiveAdBanner';
 import SupportModal from './components/SupportModal';
 import { useCountry, useI18n, usePlayerName } from './context/AppContext';
 import { useSoundEffects } from './hooks/useSoundEffects';
@@ -35,7 +34,6 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [scorePop, setScorePop] = useState(null);
   const [showSupportModal, setShowSupportModal] = useState(false);
-  const [questionAdKey, setQuestionAdKey] = useState(0);
   const nextTimer = useRef(null);
   const attributionOpenRef = useRef(false);
   const { playCorrect, playWrong, muted, toggleMute } = useSoundEffects();
@@ -63,7 +61,6 @@ export default function App() {
         setGameState('game_over');
       } else {
         setPolitician(data);
-        setQuestionAdKey((current) => current + 1);
         setGameState('playing');
       }
     } catch {
@@ -213,7 +210,6 @@ export default function App() {
               disabled={gameState !== 'playing'}
             />
             <GuessHistory history={history} />
-            <ResponsiveAdBanner key={questionAdKey} />
             <AppPromoCards />
           </>
         )}

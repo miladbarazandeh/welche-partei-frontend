@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import AppBrand from '../components/AppBrand';
 import AppPromoCards from '../components/AppPromoCards';
 import LegalFooter from '../components/LegalFooter';
-import ResponsiveAdBanner from '../components/ResponsiveAdBanner';
 import SettingsMenu from '../components/SettingsMenu';
 import { useCountry, useI18n, usePartyHelpers, usePlayerName } from '../context/AppContext';
 import { countryApiUrl } from '../lib/api';
@@ -337,8 +336,6 @@ export default function StatsPage() {
             <InsightCard value={data.global_best_streak} label={t('stats.bestStreak')} />
           </div>
 
-          <ResponsiveAdBanner />
-
           {data.spectrum_accuracy != null && (
             <section className="leaning-section">
               <p className="stats-section-heading">{t('stats.leftRight')}</p>
@@ -483,8 +480,6 @@ export default function StatsPage() {
               </div>
             </section>
           )}
-
-          <ResponsiveAdBanner />
         </>
       )}
 
