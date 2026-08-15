@@ -186,29 +186,6 @@ export default function WpStatsPage() {
           </div>
         ) : (
           <>
-            {(topIssue || splitIssue) && (
-              <div className="wp-stats__summary">
-                {topIssue && (
-                  <div className="wp-stats__summary-card">
-                    <span className="wp-stats__summary-label">{t('wp.stats.summary.mostAgreed')}</span>
-                    <span className="wp-stats__summary-value">{topIssue.pct}%</span>
-                    <span className="wp-stats__summary-sub">{topIssue.label}</span>
-                  </div>
-                )}
-                {splitIssue && (
-                  <div className="wp-stats__summary-card">
-                    <span className="wp-stats__summary-label">{t('wp.stats.summary.mostSplit')}</span>
-                    <span className="wp-stats__summary-value">~50/50</span>
-                    <span className="wp-stats__summary-sub">{splitIssue.label}</span>
-                  </div>
-                )}
-                <div className="wp-stats__summary-card">
-                  <span className="wp-stats__summary-label">{t('wp.stats.summary.topics')}</span>
-                  <span className="wp-stats__summary-value">{issueRows.length}</span>
-                  <span className="wp-stats__summary-sub">{t('wp.stats.summary.topicsOf')}</span>
-                </div>
-              </div>
-            )}
 
             {issueRows.length > 0 && (
               <section className="wp-stats__section">
