@@ -129,7 +129,6 @@ export default function ValuesCard({ cardIndex }) {
       <div className="wp-card__body">
         <div className="wp-card__left">
           <h2 className="wp-card__question">{isEn ? card.q_en : card.q}</h2>
-          <p className="wp-card__context">{isEn ? card.context_en : card.context}</p>
         </div>
 
         <div className="wp-choices">
@@ -147,9 +146,6 @@ export default function ValuesCard({ cardIndex }) {
 
       <div className="wp-card__nav">
         <button className="wp-btn wp-btn--ghost" onClick={prevStep}>{t('wp.card.back')}</button>
-        {selected && (
-          <button className="wp-btn wp-btn--primary" onClick={nextStep}>{t('wp.card.next')}</button>
-        )}
       </div>
     </div>
   );

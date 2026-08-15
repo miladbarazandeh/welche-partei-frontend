@@ -793,18 +793,13 @@
   color: #eeeef8;
 }
 
-.wp-card__context {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.75;
-  padding: 14px 18px;
-  background: var(--wp-glass);
-  border: 1px solid var(--wp-border);
-  border-left: 3px solid var(--wp-accent);
-  border-radius: 0 var(--wp-radius-sm) var(--wp-radius-sm) 0;
+.wp-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* Desktop card: side-by-side question + context */
+/* Desktop card: side-by-side question + choices */
 @media (min-width: 1024px) {
   .wp-card {
     max-width: 920px;
@@ -960,15 +955,112 @@
   color: #e0d9ff;
 }
 
+/* ─── Party positions reveal ─────────────────────────────── */
+.wp-positions__toggle {
+  color: var(--wp-accent);
+  background: var(--wp-accent-subtle);
+  border: 1px solid rgba(124, 92, 252, 0.22);
+}
+
+.wp-positions__toggle:hover {
+  background: var(--wp-accent-mid);
+  border-color: var(--wp-accent);
+}
+
+.wp-positions__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wp-positions__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.wp-position-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--wp-glass);
+  border: 1px solid var(--wp-border);
+  border-radius: var(--wp-radius-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.wp-position-row:hover {
+  border-color: var(--wp-border-mid);
+  background: var(--wp-glass-strong);
+}
+
+.wp-position-row__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wp-position-row__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #eeeef8;
+  flex: 1;
+  min-width: 0;
+}
+
+.wp-position-row__badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.wp-position-row--yes .wp-position-row__badge {
+  background: var(--wp-yes-bg);
+  color: var(--wp-yes-text);
+}
+
+.wp-position-row--no .wp-position-row__badge {
+  background: var(--wp-no-bg);
+  color: var(--wp-no-text);
+}
+
+.wp-position-row--neutral .wp-position-row__badge {
+  background: var(--wp-neutral-bg);
+  color: var(--wp-neutral-text);
+}
+
+.wp-position-row__chevron {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
 /* ─── Card nav ────────────────────────────────────────────── */
 .wp-card__nav {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-top: 4px;
   gap: 10px;
   padding-top: 20px;
   border-top: 1px solid var(--wp-border);
+}
+
+.wp-card__nav-right {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ─── Gegencheck ─────────────────────────────────────────── */

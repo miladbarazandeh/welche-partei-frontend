@@ -1,4 +1,4 @@
-const BASE = process.env.REACT_APP_API_URL || 'https://welche-partei.de/api';
+const BASE = process.env.REACT_APP_API_URL || 'http://localhost:8002';
 
 export async function fetchQuizData() {
   const res = await fetch(`${BASE}/welchepartei/data/`, { credentials: 'include' });
