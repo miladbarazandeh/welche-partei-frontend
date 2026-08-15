@@ -45,7 +45,7 @@ export default function WpHeader() {
         </Link>
 
         <nav className="wp-header__nav">
-          <Link to="/statistik" className="wp-header__nav-link">
+          <Link to="/statistik" className="wp-header__nav-link" aria-label={t('wp.header.stats')}>
             <IconBarChart />
             <span>{t('wp.header.stats')}</span>
           </Link>
@@ -72,6 +72,7 @@ export default function WpHeader() {
             <button
               className={`wp-header__reset ${confirm ? 'wp-header__reset--confirm' : ''}`}
               onClick={handleReset}
+              aria-label={confirm ? t('wp.header.resetConfirm') : t('wp.header.reset')}
             >
               {confirm ? (
                 t('wp.header.resetConfirm')

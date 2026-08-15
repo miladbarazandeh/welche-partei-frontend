@@ -176,6 +176,30 @@
   background: var(--wp-accent-subtle);
 }
 
+@media (max-width: 480px) {
+  .wp-header__inner {
+    gap: 8px;
+  }
+
+  .wp-header__brand {
+    font-size: 13px;
+  }
+
+  .wp-header__nav {
+    gap: 4px;
+  }
+
+  .wp-header__nav-link,
+  .wp-header__reset:not(.wp-header__reset--confirm) {
+    padding: 7px;
+  }
+
+  .wp-header__nav-link span,
+  .wp-header__reset:not(.wp-header__reset--confirm) span {
+    display: none;
+  }
+}
+
 /* ─── Buy-me-a-coffee block ──────────────────────────────── */
 .wp-coffee {
   border-top: 1px solid var(--wp-border);
