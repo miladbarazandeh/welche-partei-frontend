@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import AppBrand from './AppBrand';
 import SettingsMenu from './SettingsMenu';
 import { useCountry, useI18n } from '../context/AppContext';
+import { useSupportTreat } from '../hooks/useSupportTreat';
 
 export default function GameHeader({ score, streak, best, spectrumAccuracy, totalAnswers, scorePop }) {
   const country = useCountry();
   const { t } = useI18n();
+  const { emoji } = useSupportTreat();
   const spectrumDisplay =
     totalAnswers > 0 && spectrumAccuracy != null ? `${Math.round(spectrumAccuracy)}%` : t('common.notAvailable');
 
@@ -24,7 +26,7 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
           rel="noopener noreferrer"
           className="bmc-btn"
         >
-          {t('nav.support')} ☕
+          {t('nav.support')} {emoji}
         </a>
       </div>
 

@@ -1,4 +1,5 @@
 import { useI18n } from '../context/AppContext';
+import { useSupportTreat } from '../hooks/useSupportTreat';
 import AppPromoCards from './AppPromoCards';
 
 const BMC_URL = 'https://buymeacoffee.com/welche.partei';
@@ -10,6 +11,7 @@ function resetSession() {
 
 export default function GameOverScreen({ stats }) {
   const { t } = useI18n();
+  const { treat, emoji } = useSupportTreat();
   const accuracy = stats.spectrumAccuracy !== null ? Math.round(stats.spectrumAccuracy) : null;
 
   return (
@@ -46,7 +48,7 @@ export default function GameOverScreen({ stats }) {
           rel="noopener noreferrer"
           className="game-over__btn game-over__btn--coffee"
         >
-          ☕ {t('game.over.support')}
+          {emoji} {t('game.over.support', { treat: t(`treat.${treat}`) })}
         </a>
         <button className="game-over__btn game-over__btn--reset" onClick={resetSession}>
           {t('game.over.restart')}

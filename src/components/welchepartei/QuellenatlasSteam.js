@@ -1,8 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useWelchePartei } from '../../context/WelcheParteiContext';
 import { useI18n } from '../../context/AppContext';
 import SourceQuoteModal from './SourceQuoteModal';
 import BuyMeCoffee from './BuyMeCoffee';
+
+// Same threshold as the Gegencheck matching cutoff: a party missing sourced
+// positions on more than this many issues reads as mostly empty columns in
+// the table, so it's pushed to the end instead of breaking up the
+// left-right spectrum ordering of the well-documented parties.
+const MAX_MISSING_FOR_FRONT = 5;
 
 function getCellClass(partySlot, userSlot) {
   if (userSlot == null) {
@@ -19,14 +25,32 @@ export default function QuellenatlasSteam({ positionsWithIssue }) {
   const isEn = locale === 'en';
   const [modal, setModal] = useState(null);
 
-  if (!data) return null;
-
-  const { parties, issues } = data;
+  const { parties, issues } = data || {};
 
   const posMap = {};
   positionsWithIssue.forEach((pos) => {
     posMap[`${pos.party_id}::${pos.issue?.id}`] = pos;
   });
+
+  // Stable partition, not a full re-sort: parties with enough sourced
+  // positions keep their original left-right spectrum order; parties with
+  // too few just move as a group to the end, still in their relative order.
+  const sortedParties = useMemo(() => {
+    if (!parties || !issues) return [];
+    const refCount = {};
+    positionsWithIssue.forEach((pos) => {
+      refCount[pos.party_id] = (refCount[pos.party_id] || 0) + 1;
+    });
+    const wellCovered = [];
+    const fewRefs = [];
+    parties.forEach((p) => {
+      const missing = issues.length - (refCount[p.id] || 0);
+      (missing > MAX_MISSING_FOR_FRONT ? fewRefs : wellCovered).push(p);
+    });
+    return [...wellCovered, ...fewRefs];
+  }, [parties, issues, positionsWithIssue]);
+
+  if (!data) return null;
 
   const issueToUserSlot = {};
   issues.forEach((issue) => {
@@ -45,7 +69,7 @@ export default function QuellenatlasSteam({ positionsWithIssue }) {
           <thead>
             <tr>
               <th className="wp-atlas__th-issue" />
-              {parties.map((p) => (
+              {sortedParties.map((p) => (
                 <th key={p.id} className="wp-atlas__th-party">
                   <span
                     className="wp-atlas__party-dot"
@@ -63,7 +87,7 @@ export default function QuellenatlasSteam({ positionsWithIssue }) {
               return (
                 <tr key={issue.id}>
                   <td className="wp-atlas__td-issue">{(isEn ? issue.label_en : '') || issue.label_de}</td>
-                  {parties.map((party) => {
+                  {sortedParties.map((party) => {
                     const pos = posMap[`${party.id}::${issue.id}`];
                     if (!pos) {
                       return <td key={party.id} className="wp-atlas__td wp-cell--empty">–</td>;

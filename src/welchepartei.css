@@ -1175,6 +1175,13 @@
   opacity: 0.38;
 }
 
+/* Not enough documented positions to compute a meaningful percentage —
+   distinct from --ko (a known conflict): this is "we don't know", not
+   "it doesn't fit". Less dimmed than --ko since it isn't bad news. */
+.wp-match-item--low-coverage {
+  opacity: 0.55;
+}
+
 .wp-match-item__header {
   display: flex;
   align-items: center;
@@ -1230,6 +1237,43 @@
   letter-spacing: 0.04em;
 }
 
+/* Gray/neutral, not red like --ko-badge: this party isn't disqualified,
+   there just isn't enough documented material to rank it. */
+.wp-match-item__nodata-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--wp-border-mid);
+  padding: 2px 7px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}
+
+/* Response coverage, shown for every party per RESEARCH.md §D ("show
+   response coverage beside every result") — makes it visible that a
+   percentage from 1 comparable answer means something different than one
+   from 15. */
+.wp-match-item__coverage {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* Flags a missing position on the user's own dealbreaker issue: not a
+   disagreement (that's wp-match-item--ko, in red), so a distinct amber
+   "unknown" tone — the score above already excludes this item, this note
+   just makes that exclusion visible instead of silent. */
+.wp-match-item__no-data {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4a017;
+  margin: 0;
+  cursor: help;
+}
+
 /* ─── Score bar ───────────────────────────────────────────── */
 .wp-score-bar {
   position: relative;
@@ -1245,10 +1289,11 @@
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.wp-score-bar__fill--high { background: linear-gradient(90deg, #22c55e, #4ade80); }
-.wp-score-bar__fill--mid  { background: linear-gradient(90deg, #ca8a04, #fbbf24); }
-.wp-score-bar__fill--low  { background: #374151; }
-.wp-score-bar__fill--ko   { background: transparent; width: 0 !important; }
+.wp-score-bar__fill--high    { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.wp-score-bar__fill--mid     { background: linear-gradient(90deg, #ca8a04, #fbbf24); }
+.wp-score-bar__fill--low     { background: #374151; }
+.wp-score-bar__fill--ko      { background: transparent; width: 0 !important; }
+.wp-score-bar__fill--unknown { background: transparent; width: 0 !important; }
 
 .wp-score-bar__label {
   display: none; /* label moved to wp-match-item__pct */
