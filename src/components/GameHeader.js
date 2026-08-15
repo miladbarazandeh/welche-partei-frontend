@@ -17,7 +17,7 @@ export default function GameHeader({ score, streak, best, spectrumAccuracy, tota
       </div>
 
       <div className="header__actions">
-        <Link to={`/${country.slug}/stats`} className="stats-nav-btn">{t('nav.stats')}</Link>
+        <Link to={`/quiz/${country.slug}/stats`} className="stats-nav-btn">{t('nav.stats')}</Link>
         <a
           href="https://buymeacoffee.com/welche.partei"
           target="_blank"

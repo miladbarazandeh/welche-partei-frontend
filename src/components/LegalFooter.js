@@ -7,11 +7,11 @@ export default function LegalFooter({ country }) {
 
   return (
     <footer className="page-footer">
-      <Link to={`/${baseCountry}/privacy`} className="page-footer__link">
+      <Link to={`/quiz/${baseCountry}/privacy`} className="page-footer__link">
         {t('common.privacy')}
       </Link>
       <span className="page-footer__separator">|</span>
-      <Link to={`/${baseCountry}/imprint`} className="page-footer__link">
+      <Link to={`/quiz/${baseCountry}/imprint`} className="page-footer__link">
         {t('common.imprint')}
       </Link>
     </footer>

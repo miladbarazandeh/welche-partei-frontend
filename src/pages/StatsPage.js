@@ -295,10 +295,10 @@ export default function StatsPage() {
       <header className="stats-header">
         <div className="stats-header__top">
           <AppBrand subtitle={t('stats.subtitle')} />
-          <SettingsMenu buildCountryHref={(slug) => `/${slug}/stats`} />
+          <SettingsMenu buildCountryHref={(slug) => `/quiz/${slug}/stats`} />
         </div>
         <div className="stats-header__actions">
-          <Link to={`/${country.slug}`} className="stats-back-btn">
+          <Link to={`/quiz/${country.slug}`} className="stats-back-btn">
             ← {t('nav.backToGame')}
           </Link>
         </div>
@@ -321,7 +321,7 @@ export default function StatsPage() {
         <div className="error-state">
           <span className="error-state__icon">⚠️</span>
           <p>{t('stats.error')}</p>
-          <Link to={`/${country.slug}`} className="btn-retry">
+          <Link to={`/quiz/${country.slug}`} className="btn-retry">
             {t('nav.backToGame')}
           </Link>
         </div>

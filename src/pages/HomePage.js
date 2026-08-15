@@ -11,7 +11,7 @@ function CountryCard({ country }) {
   const name = getCountryName(country.slug, locale);
 
   return (
-    <Link to={`/${country.slug}`} className="country-card">
+    <Link to={`/quiz/${country.slug}`} className="country-card">
       <FlagMark country={country} className="country-card__flag" />
       <div className="country-card__content">
         <h2 className="country-card__title">{name}</h2>
