@@ -9,7 +9,7 @@ const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'EN' },
 ];
 
-export default function SettingsMenu({ buildCountryHref = (slug) => `/quiz/${slug}` }) {
+export default function SettingsMenu({ buildCountryHref = (slug) => `/${slug}` }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const country = useCountry();
