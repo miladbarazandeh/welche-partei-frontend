@@ -259,36 +259,49 @@ function PoliticianSearch({ countrySlug, partyLabel, partySlug, t }) {
   );
 }
 
+const STATS_SECTIONS = ['overview', 'parties', 'confusion', 'politicians', 'leaderboard'];
+
 export default function StatsPage() {
   const country = useCountry();
   const { t } = useI18n();
   const { partyLabel, partyShortLabel, partySlug } = usePartyHelpers();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [data, setData] = useState({});
+  const [pending, setPending] = useState(STATS_SECTIONS.length);
+  const [failed, setFailed] = useState(0);
   const {playerName} = usePlayerName();
 
   useEffect(() => {
-    setLoading(true);
-    setData(null);
-    setError(false);
+    let cancelled = false;
+    setData({});
+    setPending(STATS_SECTIONS.length);
+    setFailed(0);
 
-    fetch(countryApiUrl(country.slug, '/global-stats/'), { credentials: 'include' })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('global stats failed');
-        }
-        return response.json();
-      })
-      .then((payload) => {
-        setData(payload);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
+    STATS_SECTIONS.forEach((section) => {
+      fetch(countryApiUrl(country.slug, `/global-stats/${section}/`), { credentials: 'include' })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`global stats ${section} failed`);
+          }
+          return response.json();
+        })
+        .then((payload) => {
+          if (!cancelled) setData((prev) => ({ ...prev, ...payload }));
+        })
+        .catch(() => {
+          if (!cancelled) setFailed((count) => count + 1);
+        })
+        .finally(() => {
+          if (!cancelled) setPending((count) => count - 1);
+        });
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [country.slug]);
+
+  const loading = pending > 0;
+  const error = !loading && failed === STATS_SECTIONS.length;
 
   return (
     <main className="stats-page">
@@ -327,14 +340,16 @@ export default function StatsPage() {
         </div>
       )}
 
-      {data && (
+      {!error && (
         <>
-          <div className="insights-grid">
-            <InsightCard value={data.total_answers.toLocaleString()} label={t('stats.answers')} />
-            <InsightCard value={`${data.overall_accuracy}%`} label={t('stats.accuracy')} />
-            <InsightCard value={data.unique_players.toLocaleString()} label={t('stats.players')} />
-            <InsightCard value={data.global_best_streak} label={t('stats.bestStreak')} />
-          </div>
+          {data.total_answers != null && (
+            <div className="insights-grid">
+              <InsightCard value={data.total_answers.toLocaleString()} label={t('stats.answers')} />
+              <InsightCard value={`${data.overall_accuracy}%`} label={t('stats.accuracy')} />
+              <InsightCard value={data.unique_players.toLocaleString()} label={t('stats.players')} />
+              <InsightCard value={data.global_best_streak} label={t('stats.bestStreak')} />
+            </div>
+          )}
 
           {data.spectrum_accuracy != null && (
             <section className="leaning-section">
@@ -375,19 +390,21 @@ export default function StatsPage() {
             </section>
           )}
 
-          <section className="party-accuracy">
-            <p className="stats-section-heading">{t('stats.byParty')}</p>
-            {[...(data.party_stats || [])]
-              .sort((left, right) => right.accuracy - left.accuracy)
-              .map((party) => (
-                <PartyBar
-                  key={party.party}
-                  {...party}
-                  partyLabel={partyLabel}
-                  partySlug={partySlug}
-                />
-              ))}
-          </section>
+          {data.party_stats && (
+            <section className="party-accuracy">
+              <p className="stats-section-heading">{t('stats.byParty')}</p>
+              {[...data.party_stats]
+                .sort((left, right) => right.accuracy - left.accuracy)
+                .map((party) => (
+                  <PartyBar
+                    key={party.party}
+                    {...party}
+                    partyLabel={partyLabel}
+                    partySlug={partySlug}
+                  />
+                ))}
+            </section>
+          )}
 
           {data.confusion_matrix?.length > 0 && (
             <ConfusionMatrix
